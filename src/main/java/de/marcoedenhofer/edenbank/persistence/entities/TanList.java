@@ -8,4 +8,12 @@ import java.util.List;
 public class TanList {
     @ElementCollection
     private List<Tan> tanNumbers;
+
+    public List<Tan> getTanNumbers() {
+        return tanNumbers;
+    }
+
+    public void setTanNumbers(List<Tan> tanNumbers) {
+        this.tanNumbers = tanNumbers;
+    }
 }
