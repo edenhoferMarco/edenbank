@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
-@Embeddable
-@Inheritance(strategy = InheritanceType.JOINED)
+@Entity
 public class PrivateCustomer extends Customer {
 }

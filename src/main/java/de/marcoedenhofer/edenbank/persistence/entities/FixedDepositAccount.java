@@ -6,7 +6,6 @@ import javax.persistence.InheritanceType;
 import java.util.Date;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public class FixedDepositAccount extends BankAccount {
     private float interestRate;
     private Date endDate;

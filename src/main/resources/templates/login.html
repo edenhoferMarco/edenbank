@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{img/favicon.ico}">
+    <!-- Bootstrap 4 css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' media='screen' href="css/main.css">
+    <link rel='stylesheet' type='text/css' media='screen' href="css/login.css">
+</head>
+<body>
+<div class="content-container">
+    <nav th:replace="fragments/navbar.html :: navbar"> </nav>
+    <div class="container mt-5">
+        <div class="row mt-5 justify-content-center">
+            <div class="col-4 form-container m-5">
+                <form class="p-5">
+                    <div class="form-group mb-5">
+                        <label for="customerAccountInput">Kundennummer</label>
+                        <input type="text" class="form-control" id="customerAccountInput" placeholder="Kundennummer">
+                    </div>
+                    <div class="form-group mb-5">
+                        <label for="passwordInput">Passwort</label>
+                        <input type="password" class="form-control" id="passwordInput" placeholder="Passwort">
+                    </div>
+                    <div class="row justify-content-center">
+                        <button type="submit" class="btn btn-primary px-5">Anmelden</button>
+                        <button type="submit" class="btn-link btn mt-4">Konto eröffnen</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

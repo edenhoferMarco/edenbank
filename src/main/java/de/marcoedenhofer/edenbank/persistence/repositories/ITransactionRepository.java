@@ -1,4 +1,8 @@
 package de.marcoedenhofer.edenbank.persistence.repositories;
 
-public interface ITransactionRepository {
+import de.marcoedenhofer.edenbank.persistence.entities.Transaction;
+import org.springframework.data.repository.CrudRepository;
+
+public interface ITransactionRepository extends CrudRepository<Transaction, Long> {
+
 }

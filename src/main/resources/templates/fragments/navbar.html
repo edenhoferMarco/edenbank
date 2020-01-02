@@ -1,0 +1,19 @@
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+    <nav id="navbar" class="navbar navbar-expand-md navbar-light bg-light sticky-top fixed-top border-bottom border-primary" th:fragment="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{~/}">
+                <img th:src="@{img/edenbank.png}" alt="logo" width="80" height="80" >
+                <span class="ml-5">edenbank</span>
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{~/}">Startseite</a>
+                    </li>
+                    <li class="nav-item ml-5">
+                        <a class="nav-link" th:href="@{~/login}">Anmelden</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>

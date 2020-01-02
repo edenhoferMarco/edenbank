@@ -5,7 +5,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public class CheckingAccount extends BankAccount {
     private float toInterestRate;
     private float haveInterestRate;

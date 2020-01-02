@@ -1,0 +1,31 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+.content-container {
+    background: url("../img/highrise.jpg") no-repeat center fixed;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
+
+#navbar {
+    opacity: 95%;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+.btn:focus {
+    box-shadow: none;
+}
+
+.form-container {
+    background: #ffffff;
+    opacity: 95%;
+}

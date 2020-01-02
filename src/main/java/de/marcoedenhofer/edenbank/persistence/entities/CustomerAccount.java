@@ -16,6 +16,7 @@ public class CustomerAccount {
     private List<Loan> loans;
     @OneToMany
     private List<BankAccount> bankAccounts;
+    @OneToOne
     private Customer customerData;
 
     public long getCustomerAccountId() {

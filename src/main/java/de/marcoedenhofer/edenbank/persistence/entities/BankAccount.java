@@ -3,6 +3,7 @@ package de.marcoedenhofer.edenbank.persistence.entities;
 import javax.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

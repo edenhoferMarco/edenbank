@@ -1,9 +1,13 @@
 package de.marcoedenhofer.edenbank.persistence.entities;
 
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
-@Embeddable
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long customerId;
     private PersonalData personalData;
 
     public PersonalData getPersonalData() {
