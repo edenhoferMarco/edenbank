@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{img/favicon.ico}">
+    <!-- Bootstrap 4 css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' media='screen' href="css/main.css">
+    <link rel='stylesheet' type='text/css' media='screen' href="css/create_account.css">
+</head>
+<body>
+<div class="content-container">
+    <nav th:replace="fragments/navbar.html :: navbar"> </nav>
+    <div class="container mt-5">
+        <div class="row mt-5">
+            <div class="col-12 form-container m-5 justify-content-center">
+                <div class="row">
+                    <div class="col-12">
+                        <form class="px-5">
+                            <div class="row my-5">
+                                <div class="col-12">
+                                    <p class="h5">Angaben zum Kundentyp:</p>
+                                </div>
+                            </div>
+                            <div class="row my-5">
+                                <div class="col-12">
+
+                                    <div class="btn-group btn-group-toggle">
+                                        <label class="btn btn-outline-primary active">
+                                            <input type="radio" name="customerOptions" id="radioCustomer" value="privateCustomer" checked> Privatkunde
+                                        </label>
+                                        <label class="btn btn-outline-primary">
+                                            <input type="radio" name="customerOptions" id="radioBusiness" value="businessCustomer"> Firmenkunde
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Business Details START -->
+                            <div id="business-details" class="row d-none">
+                                <div class="col-12">
+                                    <div class="row my-5">
+                                        <div class="col-12">
+                                            <p class="h5">Angaben zur Firma:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-5">
+                                            <div class="form-group">
+                                                <label for="businessNameInput">Firmenname</label>
+                                                <input type="text" class="form-control" id="businessNameInput">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <p class="h6">Firmenanschrift:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label for="businessStreetInput">Straße</label>
+                                            <input type="text" class="form-control" id="businessStreetInput">
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="businessHouseNrInput">Hausnummer</label>
+                                            <input type="text" class="form-control" id="businessHouseNrInput">
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="businessCityInput">Ort</label>
+                                            <input type="text" class="form-control" id="businessCityInput">
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="businessPostalInput">Postleitzahl</label>
+                                            <input type="text" class="form-control" id="businessPostalInput">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-4">
+                                            <label for="businessCountryInput">Land</label>
+                                            <input type="text" class="form-control" id="businessCountryInput">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Business Details END -->
+                            <!-- Personal Details START -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row my-5">
+                                        <div class="col-12">
+                                            <p class="h5">Angaben zur Person:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-2">
+                                            <p>Anrede</p>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="genderOptions" id="radioWoman" value="Frau">
+                                                <label class="form-check-label" for="radioWoman">Frau</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="genderOptions" id="radioMan" value="Herr">
+                                                <label class="form-check-label" for="radioMan">Herr</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="form-group">
+                                                <label for="firstnameInput">Vorname</label>
+                                                <input type="text" class="form-control" id="firstnameInput">
+                                            </div>
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="form-group">
+                                                <label for="lastnameInput">Nachname</label>
+                                                <input type="text" class="form-control" id="lastnameInput">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="birthdayInput">Geburtsdatum</label>
+                                                <input type="text" class="form-control" id="birthdayInput" placeholder="dd.mm.yyyy">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="birthplaceInput">Geburtsort</label>
+                                                <input type="text" class="form-control" id="birthplaceInput" placeholder="z.B. Regensburg">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="birthCountryInput">Geburtsland</label>
+                                                <input type="text" class="form-control" id="birthCountryInput" placeholder="z.B. Deutschland">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <p class="h6">Wohnort:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label for="streetInput">Straße</label>
+                                            <input type="text" class="form-control" id="streetInput">
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="houseNrInput">Hausnummer</label>
+                                            <input type="text" class="form-control" id="houseNrInput">
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="cityInput">Ort</label>
+                                            <input type="text" class="form-control" id="cityInput">
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="postalInput">Postleitzahl</label>
+                                            <input type="text" class="form-control" id="postalInput">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-4">
+                                            <label for="countryInput">Land</label>
+                                            <input type="text" class="form-control" id="countryInput">
+                                        </div>
+                                    </div>
+                                    <div class="row py-5">
+                                        <div class="col-12">
+                                            <p class="h5">Angaben zum Benutzerkonto:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pb-5">
+                                        <div class="col-4">
+                                            <label for="emailInput">E-Mail Adresse</label>
+                                            <input type="email" class="form-control" id="emailInput">
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="passwordInput">gewünschtes Passwort</label>
+                                            <input type="password" class="form-control" id="passwordInput">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Personal Details END -->
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{js/create_account.js}" onload="ready()"></script>
+</html>
