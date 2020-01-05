@@ -12,6 +12,7 @@ public class PersonalData {
     @Temporal(TemporalType.DATE)
     private Date birthdate;
     private String birthPlace;
+    private String birthCountry;
     private String gender;
     private Address personalAddress;
 
@@ -61,5 +62,13 @@ public class PersonalData {
 
     public void setPersonalAddress(Address personalAddress) {
         this.personalAddress = personalAddress;
+    }
+
+    public String getBirthCountry() {
+        return birthCountry;
+    }
+
+    public void setBirthCountry(String birthCountry) {
+        this.birthCountry = birthCountry;
     }
 }

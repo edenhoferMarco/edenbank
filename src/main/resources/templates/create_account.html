@@ -16,29 +16,29 @@
     <div class="container mt-5">
         <div class="row mt-5">
             <div class="col-12 form-container m-5 justify-content-center">
-                <div class="row">
+                <div class="row my-5 px-5">
                     <div class="col-12">
-                        <form class="px-5">
-                            <div class="row my-5">
-                                <div class="col-12">
-                                    <p class="h5">Angaben zum Kundentyp:</p>
-                                </div>
-                            </div>
-                            <div class="row my-5">
-                                <div class="col-12">
-
-                                    <div class="btn-group btn-group-toggle">
-                                        <label class="btn btn-outline-primary active">
-                                            <input type="radio" name="customerOptions" id="radioCustomer" value="privateCustomer" checked> Privatkunde
-                                        </label>
-                                        <label class="btn btn-outline-primary">
-                                            <input type="radio" name="customerOptions" id="radioBusiness" value="businessCustomer"> Firmenkunde
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                        <p class="h5">Angaben zum Kundentyp:</p>
+                    </div>
+                </div>
+                <div class="row my-5 px-5">
+                    <div class="col-12">
+                        <div class="btn-group btn-group-toggle">
+                            <label class="btn btn-outline-primary active">
+                                <input type="radio" name="customerOptions" id="radioCustomer" value="privateCustomer" checked> Privatkunde
+                            </label>
+                            <label class="btn btn-outline-primary">
+                                <input type="radio" name="customerOptions" id="radioBusiness" value="businessCustomer"> Firmenkunde
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="business-customer-form-row" class="row d-none">
+                    <div class="col-12">
+                        <!--/*@thymesVar id="businessCustomer" type="de.marcoedenhofer.edenbank.persistence.entities.BusinessCustomer"*/-->
+                        <form id="business-customer-form" th:action="@{/create_account/business}" th:object="${businessCustomer}" method="post" class="px-5">
                             <!-- Business Details START -->
-                            <div id="business-details" class="row d-none">
+                            <div class="row">
                                 <div class="col-12">
                                     <div class="row my-5">
                                         <div class="col-12">
@@ -49,7 +49,7 @@
                                         <div class="col-5">
                                             <div class="form-group">
                                                 <label for="businessNameInput">Firmenname</label>
-                                                <input type="text" class="form-control" id="businessNameInput">
+                                                <input type="text" th:field="*{companyName}" class="form-control" id="businessNameInput">
                                             </div>
                                         </div>
                                     </div>
@@ -60,26 +60,26 @@
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-4">
-                                            <label for="businessStreetInput">Straße</label>
-                                            <input type="text" class="form-control" id="businessStreetInput">
+                                            <label for="businessDetailsStreetInput">Straße</label>
+                                            <input type="text" th:field="*{companyAddress.streetName}" class="form-control" id="businessDetailsStreetInput">
                                         </div>
                                         <div class="col-2">
-                                            <label for="businessHouseNrInput">Hausnummer</label>
-                                            <input type="text" class="form-control" id="businessHouseNrInput">
+                                            <label for="businessDetailsHouseNrInput">Hausnummer</label>
+                                            <input type="text" th:field="*{companyAddress.houseNumber}" class="form-control" id="businessDetailsHouseNrInput">
                                         </div>
                                         <div class="col-4">
-                                            <label for="businessCityInput">Ort</label>
-                                            <input type="text" class="form-control" id="businessCityInput">
+                                            <label for="businessDetailsCityInput">Ort</label>
+                                            <input type="text" th:field="*{companyAddress.city}" class="form-control" id="businessDetailsCityInput">
                                         </div>
                                         <div class="col-2">
-                                            <label for="businessPostalInput">Postleitzahl</label>
-                                            <input type="text" class="form-control" id="businessPostalInput">
+                                            <label for="businessDetailsPostalInput">Postleitzahl</label>
+                                            <input type="text" th:field="*{companyAddress.postalNumber}" class="form-control" id="businessDetailsPostalInput">
                                         </div>
                                     </div>
                                     <div class="row mb-5">
                                         <div class="col-4">
-                                            <label for="businessCountryInput">Land</label>
-                                            <input type="text" class="form-control" id="businessCountryInput">
+                                            <label for="businessDetailsCountryInput">Land</label>
+                                            <input type="text" th:field="*{companyAddress.country}" class="form-control" id="businessDetailsCountryInput">
                                         </div>
                                     </div>
                                 </div>
@@ -97,24 +97,134 @@
                                         <div class="col-2">
                                             <p>Anrede</p>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="genderOptions" id="radioWoman" value="Frau">
+                                                <input th:field="*{personalData.gender}" class="form-check-input" type="radio" name="genderOptions" id="businessRadioWoman" value="Frau">
+                                                <label class="form-check-label" for="businessRadioWoman">Frau</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input th:field="*{personalData.gender}" class="form-check-input" type="radio" name="genderOptions" id="businessRadioMan" value="Herr">
+                                                <label class="form-check-label" for="businessRadioMan">Herr</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="form-group">
+                                                <label for="businessFirstnameInput">Vorname</label>
+                                                <input th:field="*{personalData.firstname}" type="text" class="form-control" id="businessFirstnameInput">
+                                            </div>
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="form-group">
+                                                <label for="businessLastnameInput">Nachname</label>
+                                                <input th:field="*{personalData.lastname}" type="text" class="form-control" id="businessLastnameInput">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="businessBirthdayInput">Geburtsdatum</label>
+                                                <input th:field="*{personalData.birthdate}" type="text" class="form-control" id="businessBirthdayInput" placeholder="dd.mm.yyyy">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="businessBirthplaceInput">Geburtsort</label>
+                                                <input th:field="*{personalData.birthPlace}" type="text" class="form-control" id="businessBirthplaceInput" placeholder="z.B. Regensburg">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="businessBirthCountryInput">Geburtsland</label>
+                                                <input th:field="*{personalData.birthCountry}" type="text" class="form-control" id="businessBirthCountryInput" placeholder="z.B. Deutschland">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <p class="h6">Wohnort:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <label for="businessStreetInput">Straße</label>
+                                            <input th:field="*{personalData.personalAddress.streetName}" type="text" class="form-control" id="businessStreetInput">
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="businessHouseNrInput">Hausnummer</label>
+                                            <input th:field="*{personalData.personalAddress.houseNumber}" type="text" class="form-control" id="businessHouseNrInput">
+                                        </div>
+                                        <div class="col-4">
+                                            <label for="businessCityInput">Ort</label>
+                                            <input th:field="*{personalData.personalAddress.city}" type="text" class="form-control" id="businessCityInput">
+                                        </div>
+                                        <div class="col-2">
+                                            <label for="businessPostalInput">Postleitzahl</label>
+                                            <input th:field="*{personalData.personalAddress.postalNumber}" type="text" class="form-control" id="businessPostalInput">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col-4">
+                                            <label for="businessCountryInput">Land</label>
+                                            <input th:field="*{personalData.personalAddress.country}" type="text" class="form-control" id="businessCountryInput">
+                                        </div>
+                                    </div>
+                                    <div class="row py-5">
+                                        <div class="col-12">
+                                            <p class="h5">Angaben zum Benutzerkonto:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pb-5">
+                                        <div class="col-4">
+                                            <label for="businessEmailInput">E-Mail Adresse</label>
+                                            <input th:field="*{email}" type="email" class="form-control" id="businessEmailInput">
+                                        </div>
+                                    </div>
+                                    <div class="row pb-5 mt-5 justify-content-center">
+                                        <div class="col-3">
+                                            <button type="submit" class="btn btn-primary btn-block btn-lg" id="businessSubmitButton">Firmenkonto eröffnen</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Personal Details END -->
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PRIVATE CUSTOMER FORM -->
+
+                <div id="private-customer-form-row" class="row">
+                    <div class="col-12">
+                        <!--/*@thymesVar id="privateCustomer" type="de.marcoedenhofer.edenbank.persistence.entities.PrivateCustomer"*/-->
+                        <form id="private-customer-form" th:action="@{/create_account/private}" th:object="${privateCustomer}" method="post" class="px-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row my-5">
+                                        <div class="col-12">
+                                            <p class="h5">Angaben zur Person:</p>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-2">
+                                            <p>Anrede</p>
+                                            <div class="form-check form-check-inline">
+                                                <input th:field="*{personalData.gender}" class="form-check-input" type="radio" name="genderOptions" id="radioWoman" value="Frau">
                                                 <label class="form-check-label" for="radioWoman">Frau</label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="genderOptions" id="radioMan" value="Herr">
+                                                <input th:field="*{personalData.gender}" class="form-check-input" type="radio" name="genderOptions" id="radioMan" value="Herr">
                                                 <label class="form-check-label" for="radioMan">Herr</label>
                                             </div>
                                         </div>
                                         <div class="col-5">
                                             <div class="form-group">
                                                 <label for="firstnameInput">Vorname</label>
-                                                <input type="text" class="form-control" id="firstnameInput">
+                                                <input th:field="*{personalData.firstname}" type="text" class="form-control" id="firstnameInput">
                                             </div>
                                         </div>
                                         <div class="col-5">
                                             <div class="form-group">
                                                 <label for="lastnameInput">Nachname</label>
-                                                <input type="text" class="form-control" id="lastnameInput">
+                                                <input th:field="*{personalData.lastname}" type="text" class="form-control" id="lastnameInput">
                                             </div>
                                         </div>
                                     </div>
@@ -122,19 +232,19 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="birthdayInput">Geburtsdatum</label>
-                                                <input type="text" class="form-control" id="birthdayInput" placeholder="dd.mm.yyyy">
+                                                <input th:field="*{personalData.birthdate}" type="text" class="form-control" id="birthdayInput" placeholder="dd.mm.yyyy">
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="birthplaceInput">Geburtsort</label>
-                                                <input type="text" class="form-control" id="birthplaceInput" placeholder="z.B. Regensburg">
+                                                <input th:field="*{personalData.birthPlace}" type="text" class="form-control" id="birthplaceInput" placeholder="z.B. Regensburg">
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="birthCountryInput">Geburtsland</label>
-                                                <input type="text" class="form-control" id="birthCountryInput" placeholder="z.B. Deutschland">
+                                                <input th:field="*{personalData.birthCountry}" type="text" class="form-control" id="birthCountryInput" placeholder="z.B. Deutschland">
                                             </div>
                                         </div>
                                     </div>
@@ -146,25 +256,25 @@
                                     <div class="row mb-3">
                                         <div class="col-4">
                                             <label for="streetInput">Straße</label>
-                                            <input type="text" class="form-control" id="streetInput">
+                                            <input th:field="*{personalData.personalAddress.streetName}" type="text" class="form-control" id="streetInput">
                                         </div>
                                         <div class="col-2">
                                             <label for="houseNrInput">Hausnummer</label>
-                                            <input type="text" class="form-control" id="houseNrInput">
+                                            <input th:field="*{personalData.personalAddress.houseNumber}" type="text" class="form-control" id="houseNrInput">
                                         </div>
                                         <div class="col-4">
                                             <label for="cityInput">Ort</label>
-                                            <input type="text" class="form-control" id="cityInput">
+                                            <input th:field="*{personalData.personalAddress.city}" type="text" class="form-control" id="cityInput">
                                         </div>
                                         <div class="col-2">
                                             <label for="postalInput">Postleitzahl</label>
-                                            <input type="text" class="form-control" id="postalInput">
+                                            <input th:field="*{personalData.personalAddress.postalNumber}" type="text" class="form-control" id="postalInput">
                                         </div>
                                     </div>
                                     <div class="row mb-5">
                                         <div class="col-4">
                                             <label for="countryInput">Land</label>
-                                            <input type="text" class="form-control" id="countryInput">
+                                            <input th:field="*{personalData.personalAddress.country}" type="text" class="form-control" id="countryInput">
                                         </div>
                                     </div>
                                     <div class="row py-5">
@@ -175,21 +285,19 @@
                                     <div class="row pb-5">
                                         <div class="col-4">
                                             <label for="emailInput">E-Mail Adresse</label>
-                                            <input type="email" class="form-control" id="emailInput">
+                                            <input th:field="*{email}" type="email" class="form-control" id="emailInput">
                                         </div>
-                                        <div class="col-4">
-                                            <label for="passwordInput">gewünschtes Passwort</label>
-                                            <input type="password" class="form-control" id="passwordInput">
+                                    </div>
+                                    <div class="row pb-5 mt-5 justify-content-center">
+                                        <div class="col-3">
+                                            <button type="submit" class="btn btn-primary btn-block btn-lg" id="privateSubmitButton">Privatkonto eröffnen</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Personal Details END -->
                         </form>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>

@@ -1,10 +1,14 @@
 package de.marcoedenhofer.edenbank.persistence.entities;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class CustomerAccount {
+public class CustomerAccount implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long customerAccountId;
@@ -17,7 +21,7 @@ public class CustomerAccount {
     @OneToMany
     private List<BankAccount> bankAccounts;
     @OneToOne
-    private Customer customerData;
+    private Customer customerDetails;
 
     public long getCustomerAccountId() {
         return customerAccountId;
@@ -27,8 +31,38 @@ public class CustomerAccount {
         this.customerAccountId = customerAccountId;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return String.valueOf(customerAccountId);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !isArchived;
     }
 
     public void setPassword(String password) {
@@ -75,11 +109,11 @@ public class CustomerAccount {
         this.bankAccounts = bankAccounts;
     }
 
-    public Customer getCustomerData() {
-        return customerData;
+    public Customer getCustomerDetails() {
+        return customerDetails;
     }
 
-    public void setCustomerData(Customer customerData) {
-        this.customerData = customerData;
+    public void setCustomerDetails(Customer customerData) {
+        this.customerDetails = customerData;
     }
 }

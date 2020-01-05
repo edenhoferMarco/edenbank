@@ -1,4 +1,6 @@
 let businessDetails = document.getElementById("business-details");
+let businessForm = document.getElementById("business-customer-form-row");
+let privateForm = document.getElementById("private-customer-form-row");
 let privateCustomerButton = document.getElementById("radioCustomer");
 let businessCustomerButton = document.getElementById("radioBusiness");
 
@@ -9,11 +11,13 @@ function ready() {
 
 function toggleBusinessDetails() {
     if (privateCustomerButton.checked) {
-        businessDetails.classList.add("d-none");
+        businessForm.classList.add("d-none");
+        privateForm.classList.remove("d-none");
         privateCustomerButton.parentElement.classList.add("active")
         businessCustomerButton.parentElement.classList.remove("active")
     } else {
-        businessDetails.classList.remove("d-none");
+        businessForm.classList.remove("d-none");
+        privateForm.classList.add("d-none");
         privateCustomerButton.parentElement.classList.remove("active")
         businessCustomerButton.parentElement.classList.add("active")
     }
