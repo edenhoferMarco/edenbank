@@ -4,7 +4,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -14,12 +16,12 @@ public class CustomerAccount implements UserDetails {
     private long customerAccountId;
     private String password;
     private double managementFee;
-    private boolean isArchived;
+    private boolean isArchived = false;
     private TanList tanList;
     @OneToMany
-    private List<Loan> loans;
+    private List<Loan> loans = new ArrayList<>();
     @OneToMany
-    private List<BankAccount> bankAccounts;
+    private List<BankAccount> bankAccounts = new ArrayList<>();
     @OneToOne
     private Customer customerDetails;
 

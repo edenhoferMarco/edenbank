@@ -12,7 +12,7 @@ public class BankAccount {
     private String iban;
     private String bic;
     private double balance;
-    private boolean isArchived;
+    private boolean isArchived = false;
 
     public long getBankAccountId() {
         return bankAccountId;

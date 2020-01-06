@@ -1,13 +1,14 @@
 package de.marcoedenhofer.edenbank.persistence.entities;
 
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long customerId;
+    @NonNull
     private String email;
     private PersonalData personalData;
 
@@ -20,14 +21,6 @@ public class Customer {
 
     public void setPersonalData(PersonalData personalData) {
         this.personalData = personalData;
-    }
-
-    public long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(long customerId) {
-        this.customerId = customerId;
     }
 
     public String getEmail() {

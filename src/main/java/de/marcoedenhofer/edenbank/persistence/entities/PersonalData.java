@@ -13,7 +13,7 @@ public class PersonalData {
     private Date birthdate;
     private String birthPlace;
     private String birthCountry;
-    private String gender;
+    private String formOfAddress;
     private Address personalAddress;
 
     public String getFirstname() {
@@ -48,12 +48,12 @@ public class PersonalData {
         this.birthPlace = birthPlace;
     }
 
-    public String getGender() {
-        return gender;
+    public String getFormOfAddress() {
+        return formOfAddress;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setFormOfAddress(String gender) {
+        this.formOfAddress = gender;
     }
 
     public Address getPersonalAddress() {

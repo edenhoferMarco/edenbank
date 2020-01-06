@@ -1,4 +1,4 @@
-<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<html lang="de" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <nav id="navbar" class="navbar navbar-expand-md navbar-light bg-light sticky-top fixed-top border-bottom border-primary" th:fragment="navbar">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{~/}">
@@ -10,8 +10,14 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{~/}">Startseite</a>
                     </li>
-                    <li class="nav-item ml-5">
-                        <a class="nav-link" th:href="@{~/login}">Anmelden</a>
+                    <li class="nav-item ml-5" sec:authorize="isAnonymous()">
+                        <a class="nav-link"  th:href="@{~/login}">Anmelden</a>
+                    </li>
+                    <li class="nav-item ml-5" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{~/overview}">Übersicht</a>
+                    </li>
+                    <li class="nav-item ml-5" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{~/logout}">Abmelden</a>
                     </li>
                 </ul>
             </div>

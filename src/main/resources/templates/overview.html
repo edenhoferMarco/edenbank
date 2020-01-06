@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{img/favicon.ico}">
+    <!-- Bootstrap 4 css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' media='screen' href="css/main.css">
+    <link rel='stylesheet' type='text/css' media='screen' href="css/overview.css">
+</head>
+<body>
+<div class="content-container">
+    <nav th:replace="fragments/navbar.html :: navbar"> </nav>
+    <div class="background-container">
+        <div class="container pt-5">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="row mb-4">
+                        <div class="col-8">
+                            <h5>Girokonten</h5>
+                        </div>
+                        <div class="col-4">
+                            <form th:action="@{/bank_account/create/checking_account}" method="post" th:object="${customerAccount}">
+                                <input type="hidden" th:field="${customerAccount.customerAccountId}" />
+                                <button type="submit" class="btn btn-outline-primary btn-block px-5">Girokonto anlegen</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="list-group mb-5" >
+                                <a href="#" th:each="checkingAccount: ${checkingAccounts}" class="list-group-item list-group-item-action mb-3">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <p>IBAN</p>
+                                            <p th:text="${checkingAccount.getIban()}"></p>
+                                        </div>
+                                        <div class="col-4">
+                                            <p>Kontostand</p>
+                                            <p th:text="${checkingAccount.getBalance()} + ' €'"></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SAVINGS_ACCOUNTS -->
+                    <div class="row mb-4">
+                        <div class="col-8">
+                            <h5>Tagesgeldkonten</h5>
+                        </div>
+                        <div class="col-4">
+                            <form th:action="@{/bank_account/create/savings_account}" method="post" th:object="${customerAccount}">
+                                <input type="hidden" th:field="${customerAccount.customerAccountId}" />
+                                <button type="submit" class="btn btn-outline-primary btn-block px-5">Tagesgeldkonto anlegen</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="list-group mb-5" >
+                                <a href="#" th:each="savingsAccount: ${savingsAccounts}" class="list-group-item list-group-item-action mb-3">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <p>IBAN</p>
+                                            <p th:text="${savingsAccount.getIban()}"></p>
+                                        </div>
+                                        <div class="col-4">
+                                            <p>Kontostand</p>
+                                            <p th:text="${savingsAccount.getBalance()} + ' €'"></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FIXED_DEPOSTI_ACCOUNTS -->
+                    <div class="row mb-4">
+                        <div class="col-8">
+                            <h5>Festgeldkonten</h5>
+                        </div>
+                        <div class="col-4">
+                            <form th:action="@{/bank_account/create/fixed_deposit_account}" method="post" th:object="${customerAccount}">
+                                <input type="hidden" th:field="${customerAccount.customerAccountId}" />
+                                <button type="submit" class="btn btn-outline-primary btn-block px-5">Festgeldkonto anlegen</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="list-group mb-5" >
+                                <a href="#" th:each="fixedDepositAccount: ${fixedDepositAccounts}" class="list-group-item list-group-item-action mb-3">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <p>IBAN</p>
+                                            <p th:text="${fixedDepositAccount.getIban()}"></p>
+                                        </div>
+                                        <div class="col-4">
+                                            <p>Kontostand</p>
+                                            <p th:text="${fixedDepositAccount.getBalance()} + ' €'"></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+</body>
+</html>

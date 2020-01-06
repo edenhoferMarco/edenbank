@@ -43,12 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .formLogin()
                     .loginPage("/login").permitAll()
-                    .defaultSuccessUrl("/account")
+                    .defaultSuccessUrl("/overview")
                     .failureUrl("/login?error")
                 .and()
                     .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/?logout")
-                    .deleteCookies("remember-me")
+                    .logoutSuccessUrl("/login")
                     .permitAll()
                 .and()
                     .rememberMe();

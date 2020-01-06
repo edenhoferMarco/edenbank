@@ -1,8 +1,8 @@
 package de.marcoedenhofer.edenbank.presentation;
 
 import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
-import de.marcoedenhofer.edenbank.persistence.entities.Customer;
-import de.marcoedenhofer.edenbank.persistence.entities.CustomerAccount;
+import de.marcoedenhofer.edenbank.persistence.entities.*;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
@@ -12,6 +12,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @Scope("session")
@@ -26,17 +30,58 @@ public class CustomerAccountController {
         this.userDetailsService = userDetailsService;
     }
 
-    @RequestMapping(value = "/account")
+    @RequestMapping(value = "/overview")
     public String account(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails details = userDetailsService.loadUserByUsername(auth.getName());
         if (details instanceof CustomerAccount) {
-            CustomerAccount cust = (CustomerAccount) details;
-            Customer customerDetails = cust.getCustomerDetails();
-            model.addAttribute("customerAccount", cust);
+            CustomerAccount customerAccount = (CustomerAccount) details;
+            Customer customerDetails = customerAccount.getCustomerDetails();
+            List<BankAccount> bankAccounts = customerAccount.getBankAccounts();
+            List<CheckingAccount> checkingAccounts = collectAllCheckingAccounts(bankAccounts);
+            List<SavingsAccount> savingsAccounts = collectAllSavingsAccounts(bankAccounts);
+            List<FixedDepositAccount> fixedDepositAccounts = collectAllFixedDepositAccounts(bankAccounts);
+
+            model.addAttribute("customerAccount", customerAccount);
+            model.addAttribute("checkingAccounts", checkingAccounts);
+            model.addAttribute("savingsAccounts", savingsAccounts);
+            model.addAttribute("fixedDepositAccounts", fixedDepositAccounts);
             model.addAttribute("customerDetails", customerDetails);
         }
 
-        return "account";
+        return "overview";
+    }
+
+    private List<CheckingAccount> collectAllCheckingAccounts(List<BankAccount> bankAccounts) {
+        List<CheckingAccount> checkingAccounts = new ArrayList<>();
+        bankAccounts.forEach(bankAccount -> {
+            if (bankAccount instanceof CheckingAccount) {
+                checkingAccounts.add((CheckingAccount) bankAccount);
+            }
+        });
+
+        return checkingAccounts;
+    }
+
+    private List<SavingsAccount> collectAllSavingsAccounts(List<BankAccount> bankAccounts) {
+        List<SavingsAccount> savingsAccounts = new ArrayList<>();
+        bankAccounts.forEach(bankAccount -> {
+            if (bankAccount instanceof SavingsAccount) {
+                savingsAccounts.add((SavingsAccount) bankAccount);
+            }
+        });
+
+        return savingsAccounts;
+    }
+
+    private List<FixedDepositAccount> collectAllFixedDepositAccounts(List<BankAccount> bankAccounts) {
+        List<FixedDepositAccount> fixedDepositAccounts = new ArrayList<>();
+        bankAccounts.forEach(bankAccount -> {
+            if (bankAccount instanceof FixedDepositAccount) {
+                fixedDepositAccounts.add((FixedDepositAccount) bankAccount);
+            }
+        });
+
+        return fixedDepositAccounts;
     }
 }

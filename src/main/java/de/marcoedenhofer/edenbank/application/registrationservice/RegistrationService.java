@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class RegistrationService implements IRegistrationService, UserDetailsService {
     private final double PRIVATE_MANAGEMENT_FEE = 20;
     private final double BUSINESS_MANAGEMENT_FEE = 150;
+
     private final ICustomerRepository customerRepository;
     private final ICustomerAccountRepository customerAccountRepository;
     private final BCryptPasswordEncoder encoder;
@@ -33,13 +34,13 @@ public class RegistrationService implements IRegistrationService, UserDetailsSer
     }
 
     @Override
-    public void createPrivateCustomerAccount(PrivateCustomer customer) {
+    public CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer) {
         customer = this.customerRepository.save(customer);
 
         // TODO: call elyes for postident
 
         CustomerAccount account = createCustomerAccount(PRIVATE_MANAGEMENT_FEE, customer);
-        customerAccountRepository.save(account);
+        return customerAccountRepository.save(account);
     }
 
     @Override

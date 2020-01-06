@@ -1,7 +1,9 @@
 package de.marcoedenhofer.edenbank.presentation;
 
+import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
 import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
 import de.marcoedenhofer.edenbank.persistence.entities.BusinessCustomer;
+import de.marcoedenhofer.edenbank.persistence.entities.CustomerAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.PrivateCustomer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,10 +17,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class RegistrationController {
     private final IRegistrationService registrationService;
+    private final IBankAccountService bankAccountService;
 
     @Autowired
-    public RegistrationController(IRegistrationService registrationService) {
+    public RegistrationController(IRegistrationService registrationService,
+                                  IBankAccountService bankAccountService) {
         this.registrationService = registrationService;
+        this.bankAccountService = bankAccountService;
     }
 
     @RequestMapping(value = "/create_account", method = RequestMethod.GET)
@@ -30,7 +35,8 @@ public class RegistrationController {
 
     @RequestMapping(value = "/create_account/private", method = RequestMethod.POST)
     public String registerPrivateCustomer(@ModelAttribute("privateCustomer") PrivateCustomer privateCustomer, RedirectAttributes redirectAttributes) {
-        this.registrationService.createPrivateCustomerAccount(privateCustomer);
+        CustomerAccount account = registrationService.createPrivateCustomerAccount(privateCustomer);
+        bankAccountService.createCheckingAccountForCustomerAccount(account);
         return "redirect:/login";
     }
 
