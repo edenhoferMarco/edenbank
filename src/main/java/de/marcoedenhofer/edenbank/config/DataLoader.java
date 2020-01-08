@@ -49,7 +49,7 @@ public class DataLoader implements ApplicationRunner {
         customer.setPersonalData(personalData);
 
         CustomerAccount customerAccount = registrationService.createPrivateCustomerAccount(customer);
-        bankAccountService.createCheckingAccountForCustomerAccount(customerAccount);
+        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,100000);
 
     }
 }

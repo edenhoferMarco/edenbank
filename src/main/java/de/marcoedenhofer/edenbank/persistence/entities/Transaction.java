@@ -16,6 +16,7 @@ public class Transaction {
     private BankAccount senderBankAccount;
     @ManyToOne
     private BankAccount receiverBankAccount;
+    private boolean transactionDone = false;
 
     public long getTransactionId() {
         return transactionId;
@@ -63,5 +64,13 @@ public class Transaction {
 
     public void setReceiverBankAccount(BankAccount receiverBankAccount) {
         this.receiverBankAccount = receiverBankAccount;
+    }
+
+    public boolean isTransactionDone() {
+        return transactionDone;
+    }
+
+    public void setTransactionDone(boolean transactionDone) {
+        this.transactionDone = transactionDone;
     }
 }

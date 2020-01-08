@@ -2,6 +2,7 @@
     background: white;
     width: 100%;
     opacity: 95%;
+    min-height: calc(100% - var(--navbar-height));
 }
 
 h1 {

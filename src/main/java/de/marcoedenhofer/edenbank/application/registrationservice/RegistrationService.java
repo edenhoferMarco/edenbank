@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Qualifier("security")
-public class RegistrationService implements IRegistrationService, UserDetailsService {
+public class RegistrationService implements IRegistrationService {
     private final double PRIVATE_MANAGEMENT_FEE = 20;
     private final double BUSINESS_MANAGEMENT_FEE = 150;
 
@@ -51,6 +51,16 @@ public class RegistrationService implements IRegistrationService, UserDetailsSer
         customerAccountRepository.save(account);
     }
 
+    @Override
+    public CustomerAccount loadCustomerAccountWithId(long customerAccountId) throws UsernameNotFoundException {
+        CustomerAccount customerAccount = customerAccountRepository.findById(customerAccountId)
+                .orElseThrow( () -> {
+                    throw new UsernameNotFoundException("Kundenaccount mit Nummer: " + customerAccountId + " existiert nicht");
+                });
+
+        return customerAccount;
+    }
+
     private CustomerAccount createCustomerAccount(double managementFee, Customer customer) {
         CustomerAccount account = new CustomerAccount();
         account.setArchived(false);
@@ -64,10 +74,10 @@ public class RegistrationService implements IRegistrationService, UserDetailsSer
     }
 
     @Override
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        CustomerAccount account = customerAccountRepository.findById(Long.parseLong(id))
+    public UserDetails loadUserByUsername(String customerAccountId) throws UsernameNotFoundException {
+        CustomerAccount account = customerAccountRepository.findById(Long.parseLong(customerAccountId))
                 .orElseThrow( () -> {
-                    throw new UsernameNotFoundException("Kundenaccount mit Nummer: " + id + " existiert nicht");
+                    throw new UsernameNotFoundException("Kundenaccount mit Nummer: " + customerAccountId + " existiert nicht");
                 });
 
         return account;

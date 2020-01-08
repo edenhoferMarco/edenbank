@@ -55,7 +55,7 @@ public class CustomerAccountController {
     private List<CheckingAccount> collectAllCheckingAccounts(List<BankAccount> bankAccounts) {
         List<CheckingAccount> checkingAccounts = new ArrayList<>();
         bankAccounts.forEach(bankAccount -> {
-            if (bankAccount instanceof CheckingAccount) {
+            if (!bankAccount.isArchived() && bankAccount instanceof CheckingAccount) {
                 checkingAccounts.add((CheckingAccount) bankAccount);
             }
         });
@@ -66,7 +66,7 @@ public class CustomerAccountController {
     private List<SavingsAccount> collectAllSavingsAccounts(List<BankAccount> bankAccounts) {
         List<SavingsAccount> savingsAccounts = new ArrayList<>();
         bankAccounts.forEach(bankAccount -> {
-            if (bankAccount instanceof SavingsAccount) {
+            if (!bankAccount.isArchived() && bankAccount instanceof SavingsAccount) {
                 savingsAccounts.add((SavingsAccount) bankAccount);
             }
         });
@@ -77,7 +77,7 @@ public class CustomerAccountController {
     private List<FixedDepositAccount> collectAllFixedDepositAccounts(List<BankAccount> bankAccounts) {
         List<FixedDepositAccount> fixedDepositAccounts = new ArrayList<>();
         bankAccounts.forEach(bankAccount -> {
-            if (bankAccount instanceof FixedDepositAccount) {
+            if (!bankAccount.isArchived() && bankAccount instanceof FixedDepositAccount) {
                 fixedDepositAccounts.add((FixedDepositAccount) bankAccount);
             }
         });

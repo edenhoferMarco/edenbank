@@ -11,6 +11,79 @@
     <link rel='stylesheet' type='text/css' media='screen' href="css/overview.css">
 </head>
 <body>
+
+<!-- CheckingAccount creation modal -->
+<div class="modal fade" id="checkingAccountCreationModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="checkingAccountCreationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" >Girokonto hinzufügen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Wollen Sie wirklich ein weiteres Girokonto anlegen?</p>
+            </div>
+            <div class="modal-footer border-top-0">
+                <form th:action="@{/bank_account/create/checking_account}" method="post" th:object="${customerAccount}">
+                    <input type="hidden" th:field="${customerAccount.customerAccountId}" />
+                    <button type="submit" class="btn btn-primary px-5">Girokonto anlegen</button>
+                </form>
+                <button type="button" class="btn btn-outline-danger px-5" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SavingsAccount creation modal -->
+<div class="modal fade" id="savingsAccountCreationModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="savingsAccountCreationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" >Tagesgeldkonto hinzufügen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Wollen Sie wirklich ein weiteres Tagesgeldkonto anlegen?</p>
+            </div>
+            <div class="modal-footer border-top-0">
+                <form th:action="@{/bank_account/create/savings_account}" method="post" th:object="${customerAccount}">
+                    <input type="hidden" th:field="${customerAccount.customerAccountId}" />
+                    <button type="submit" class="btn btn-primary px-5">Tagesgeldkonto anlegen</button>
+                </form>
+                <button type="button" class="btn btn-outline-danger px-5" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FixedDepositAccount creation modal -->
+<div class="modal fade" id="fixedDepositAccountCreationModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="fixedDepositAccountCreationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" >Festgeldkonto hinzufügen</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Wollen Sie wirklich ein weiteres Festgeldkonto anlegen?</p>
+            </div>
+            <div class="modal-footer border-top-0">
+                <form th:action="@{/bank_account/create/fixed_deposit_account}" method="post" th:object="${customerAccount}">
+                    <input type="hidden" th:field="${customerAccount.customerAccountId}" />
+                    <button type="submit" class="btn btn-primary px-5">Festgeldkonto anlegen</button>
+                </form>
+                <button type="button" class="btn btn-outline-danger px-5" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="content-container">
     <nav th:replace="fragments/navbar.html :: navbar"> </nav>
     <div class="background-container">
@@ -22,16 +95,13 @@
                             <h5>Girokonten</h5>
                         </div>
                         <div class="col-4">
-                            <form th:action="@{/bank_account/create/checking_account}" method="post" th:object="${customerAccount}">
-                                <input type="hidden" th:field="${customerAccount.customerAccountId}" />
-                                <button type="submit" class="btn btn-outline-primary btn-block px-5">Girokonto anlegen</button>
-                            </form>
+                            <button type="button" class="btn btn-outline-primary btn-block px-5" data-toggle="modal" data-target="#checkingAccountCreationModal">Girokonto anlegen</button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="list-group mb-5" >
-                                <a href="#" th:each="checkingAccount: ${checkingAccounts}" class="list-group-item list-group-item-action mb-3">
+                                <a th:href="@{/bank_account/{id}(id=${checkingAccount.getBankAccountId()})}" th:each="checkingAccount: ${checkingAccounts}" class="list-group-item list-group-item-action mb-3">
                                     <div class="row">
                                         <div class="col-5">
                                             <p>IBAN</p>
@@ -39,7 +109,7 @@
                                         </div>
                                         <div class="col-4">
                                             <p>Kontostand</p>
-                                            <p th:text="${checkingAccount.getBalance()} + ' €'"></p>
+                                            <p th:text="${checkingAccount.getBalance()} + ' €'" th:class="${checkingAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
                                         </div>
                                     </div>
                                 </a>
@@ -53,16 +123,13 @@
                             <h5>Tagesgeldkonten</h5>
                         </div>
                         <div class="col-4">
-                            <form th:action="@{/bank_account/create/savings_account}" method="post" th:object="${customerAccount}">
-                                <input type="hidden" th:field="${customerAccount.customerAccountId}" />
-                                <button type="submit" class="btn btn-outline-primary btn-block px-5">Tagesgeldkonto anlegen</button>
-                            </form>
+                            <button type="submit" class="btn btn-outline-primary btn-block px-5" data-toggle="modal" data-target="#savingsAccountCreationModal">Tagesgeldkonto anlegen</button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="list-group mb-5" >
-                                <a href="#" th:each="savingsAccount: ${savingsAccounts}" class="list-group-item list-group-item-action mb-3">
+                                <a th:href="@{/bank_account/{id}(id=${savingsAccount.getBankAccountId()})}" th:each="savingsAccount: ${savingsAccounts}" class="list-group-item list-group-item-action mb-3">
                                     <div class="row">
                                         <div class="col-5">
                                             <p>IBAN</p>
@@ -70,7 +137,7 @@
                                         </div>
                                         <div class="col-4">
                                             <p>Kontostand</p>
-                                            <p th:text="${savingsAccount.getBalance()} + ' €'"></p>
+                                            <p th:text="${savingsAccount.getBalance()} + ' €'" th:class="${savingsAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
                                         </div>
                                     </div>
                                 </a>
@@ -84,16 +151,14 @@
                             <h5>Festgeldkonten</h5>
                         </div>
                         <div class="col-4">
-                            <form th:action="@{/bank_account/create/fixed_deposit_account}" method="post" th:object="${customerAccount}">
-                                <input type="hidden" th:field="${customerAccount.customerAccountId}" />
-                                <button type="submit" class="btn btn-outline-primary btn-block px-5">Festgeldkonto anlegen</button>
-                            </form>
+                            <button type="submit" class="btn btn-outline-primary btn-block px-5" data-toggle="modal" data-target="#fixedDepositAccountCreationModal">Festgeldkonto anlegen</button>
+
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="list-group mb-5" >
-                                <a href="#" th:each="fixedDepositAccount: ${fixedDepositAccounts}" class="list-group-item list-group-item-action mb-3">
+                                <a th:href="@{/bank_account/{id}(id=${fixedDepositAccount.getBankAccountId()})}" th:each="fixedDepositAccount: ${fixedDepositAccounts}" class="list-group-item list-group-item-action mb-3">
                                     <div class="row">
                                         <div class="col-5">
                                             <p>IBAN</p>
@@ -101,7 +166,7 @@
                                         </div>
                                         <div class="col-4">
                                             <p>Kontostand</p>
-                                            <p th:text="${fixedDepositAccount.getBalance()} + ' €'"></p>
+                                            <p th:text="${fixedDepositAccount.getBalance()} + ' €'" th:class="${fixedDepositAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
                                         </div>
                                     </div>
                                 </a>
@@ -119,4 +184,9 @@
 
 
 </body>
+<!-- JS for Bootstrap Modal -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
 </html>

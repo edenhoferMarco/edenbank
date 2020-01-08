@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap 4 css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' media='screen' href="/css/main.css">
+    <link rel='stylesheet' type='text/css' media='screen' href="/css/overview.css">
+</head>
+<body>
+
+<!-- BankAccountDetails modal -->
+<div class="modal fade" id="modalAccountDetails" tabindex="-1" role="dialog" aria-labelledby="modalAccountDetails" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" th:text="'Details zu Konto: ' + ${bankAccount.getIban()}"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Kundentyp:</label>
+                        </div>
+                        <div class="col-8">
+                            <label th:text="${isBusinessCustomer} ? 'Firmenkunde' : 'Privatkunde'"></label>
+                        </div>
+                    </div>
+
+                    <div th:if="${isBusinessCustomer}" class="row">
+                        <div class="col-4">
+                            <label>Firma:</label>
+                        </div>
+                        <div class="col-8">
+                            <label th:text="${businessCustomerDetails.getCompanyName()}"></label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Kontoinhaber</label>
+                        </div>
+                        <div class="col-8">
+                            <label th:text="${customerDetails.getPersonalData().getFormOfAddress() + ' '
+                                + customerDetails.getPersonalData().getFirstname() + ' '
+                                + customerDetails.getPersonalData().getLastname()}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 justify-content-center">
+                <button type="button" class="btn btn-outline-primary px-5" data-dismiss="modal">Schließen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-container">
+    <nav th:replace="fragments/navbar.html :: navbar"> </nav>
+    <div class="background-container">
+        <div class="container pt-2">
+            <div class="row" >
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent pl-2">
+                        <li class="breadcrumb-item"><a th:href="@{/overview}">Übersicht</a></li>
+                        <li class="breadcrumb-item active"  th:text="${bankAccount.getIban()}" aria-current="page"></li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="row justify-content-center mb-3">
+                <div class="col-12">
+                    <div class="row justify-content-between mb-3">
+                        <div class="col-4">
+                            <p class="text-secondary">IBAN</p>
+                            <p class="h5" th:text="${bankAccount.getIban()}"></p>
+                        </div>
+                        <div class="col-4">
+                            <p class="text-secondary">Kontostand</p>
+                            <p class="h5" th:text="${bankAccount.getBalance()} + ' €'" th:classappend="${bankAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-outline-primary btn-block" type="button" data-toggle="modal"
+                                    data-target="#modalAccountDetails">Details</button>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-outline-danger btn-block" type="button" data-toggle="collapse"
+                                    data-target="#collapseArchiveAccount" aria-expanded="false"
+                                    aria-controls="collapseArchiveAccount">Konto stillegen</button>
+                        </div>
+                    </div>
+
+                    <div class="row collapse" id="collapseArchiveAccount">
+                        <div class="col-12">
+                            <p th:if="${otherBankAccounts.isEmpty()}">Konto zur Geldübertragung benötigt!</p>
+                            <form th:if="${!otherBankAccounts.isEmpty()}" th:action="@{/bank_account/archive}" method="post" th:object="${transactionData}">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label class="" for="transactionAccountSelect">Konto für Geldübertrag</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <select th:field="*{receiverIban}" class="custom-select" id="transactionAccountSelect">
+                                            <option th:each="activeBankAccount: ${otherBankAccounts}"
+                                                    th:value="${activeBankAccount.getIban()}"
+                                                    th:text="${activeBankAccount.getIban()}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="hidden" name="amount" th:value="${bankAccount.getBalance()}" />
+                                        <input type="hidden" name="senderIban" th:value="${bankAccount.getIban()}" />
+                                        <input type="hidden" name="usageDetails"
+                                               th:value="${'Stillegung von Konto: ' + bankAccount.getIban()}" />
+                                        <button type="submit" class="btn btn-danger btn-block">Konto stillegen</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Transactions -->
+            <div class="row pt-3 border-top border-secondary">
+                <div class="col-12">
+                    <div class="list-group mb-5" >
+                        <a href="#" th:each="transaction: ${transactions}" class="list-group-item list-group-item-action mb-3">
+                            <div class="row">
+                                <div class="col-4">
+                                    <p>Sender</p>
+                                    <p th:text="${transaction.getSenderBankAccount().getIban()}"></p>
+                                </div>
+                                <div class="col-4">
+                                    <p>Empfänger</p>
+                                    <p th:text="${transaction.getReceiverBankAccount().getIban()}"></p>
+                                </div>
+                                <div class="col-4">
+                                    <p>Betrag</p>
+                                    <p th:if="${transaction.getReceiverBankAccount().getIban() == bankAccount.getIban()}" th:text="'+ ' + ${transaction.getAmount()}" class="text-success"></p>
+                                    <p th:if="${transaction.getSenderBankAccount().getIban() == bankAccount.getIban()}" th:text="'- ' + ${transaction.getAmount()}" class="text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <p>Betreff</p>
+                                    <p th:text="${transaction.usageDetails}"></p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<!-- JS for Bootstrap Modal -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</html>
