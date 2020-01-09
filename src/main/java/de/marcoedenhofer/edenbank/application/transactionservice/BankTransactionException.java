@@ -5,7 +5,7 @@ public class BankTransactionException extends Exception {
     private String errorMessage;
 
     BankTransactionException(String errorMessage) {
-        super();
+        super(errorMessage);
         this.errorMessage = errorMessage;
     }
 

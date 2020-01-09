@@ -167,7 +167,6 @@ public class BankAccountService implements IBankAccountService {
         return account;
     }
 
-
     private String buildIban(long bankAccountId) {
         return COUNTRY_CODE + BANK_CODE + String.format("%010d", bankAccountId);
     }

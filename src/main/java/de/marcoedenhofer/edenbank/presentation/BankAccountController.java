@@ -9,6 +9,8 @@ import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,11 +56,12 @@ public class BankAccountController {
     }
 
     @RequestMapping(value = "/bank_account/archive", method = RequestMethod.POST)
-    public String registerTransaction(@ModelAttribute("transactionData") TransactionData transactionData,
+    public String registerTransaction(@ModelAttribute("transaction") Transaction transaction,
                                       RedirectAttributes redirectAttributes) {
         try {
-            transactionService.requestTransaction(transactionData);
-            BankAccount bankAccount = bankAccountService.loadBankAccountWithIban(transactionData.getSenderIban());
+            transactionService.requestTransaction(transaction);
+            BankAccount bankAccount = bankAccountService.loadBankAccountWithIban(transaction
+                    .getSenderBankAccount().getIban());
             bankAccountService.archiveBankAccount(bankAccount);
         } catch (BankTransactionException e) {
             // TODO
@@ -79,8 +82,7 @@ public class BankAccountController {
         if (customerOwnsBankAccountWithId(customerAccount, bankAccountId)) {
             List<BankAccount> activeBankAccounts = getAllActiveBankAccountsFromCustomerExceptId(customerAccount,bankAccountId);
             Boolean isBusinessCustomer = customerDetails instanceof BusinessCustomer;
-            List<Transaction> transactions = transactionService.loadAllTransactionsWithParticipantIban(
-                    bankAccount.getIban());
+            List<Transaction> transactions = transactionService.loadAllTransactionsWithParticipantBankAccount(bankAccount);
 
             if (isBusinessCustomer) {
                 BusinessCustomer businessCustomerDetails = (BusinessCustomer) customerDetails;
@@ -92,7 +94,7 @@ public class BankAccountController {
             model.addAttribute("customerDetails", customerDetails);
             model.addAttribute("isBusinessCustomer", isBusinessCustomer);
             model.addAttribute("transactions", transactions);
-            model.addAttribute("transactionData", new TransactionData());
+            model.addAttribute("transactionData", new Transaction());
             return "bank_account_details";
         } else {
             return "redirect:/overview";

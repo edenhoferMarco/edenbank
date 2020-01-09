@@ -1,11 +1,15 @@
 package de.marcoedenhofer.edenbank.application.transactionservice;
 
-import de.marcoedenhofer.edenbank.application.bankaccountservice.BankAccountNotFoundException;
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
+import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
 import de.marcoedenhofer.edenbank.persistence.entities.BankAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.Transaction;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ITransactionRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,20 +18,22 @@ import java.util.*;
 
 @Service
 public class TransactionService implements ITransactionService {
-
-    private Queue<Transaction> transactionQueue;
-
     private final ITransactionRepository transactionRepository;
     private final IBankAccountRepository bankAccountRepository;
-    private  final IBankAccountService bankAccountService;
+    private final IBankAccountService bankAccountService;
+    private final IRegistrationService registrationService;
+    private final AuthenticationManager authenticationManager;
 
     TransactionService(ITransactionRepository transactionRepository,
                        IBankAccountRepository bankAccountRepository,
-                       IBankAccountService bankAccountService) {
+                       IBankAccountService bankAccountService,
+                       IRegistrationService registrationService,
+                       AuthenticationManager authenticationManager) {
         this.transactionRepository = transactionRepository;
         this.bankAccountRepository = bankAccountRepository;
         this.bankAccountService = bankAccountService;
-        this.transactionQueue = new PriorityQueue<>();
+        this.registrationService = registrationService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -35,55 +41,47 @@ public class TransactionService implements ITransactionService {
         try {
             BankAccount sender = bankAccountService.loadBankAccountWithIban(transactionData.getSenderIban());
             BankAccount receiver = bankAccountService.loadBankAccountWithIban(transactionData.getReceiverIban());
+
+            if (!isAuthenticatable(transactionData.getSenderCustomerAccountId(),
+                    transactionData.getSenderPassword())) {
+                throw new BankTransactionException("Falsches Passwort");
+            }
+
             Transaction transaction = new Transaction();
             transaction.setAmount(transactionData.getAmount());
             transaction.setSenderBankAccount(sender);
             transaction.setReceiverBankAccount(receiver);
             transaction.setUsageDetails(transactionData.getUsageDetails());
 
-            // Debug only
             executeTransaction(transaction);
-
         } catch (UsernameNotFoundException ex) {
             throw new BankTransactionException(ex.getMessage());
+        } catch (AuthenticationException ex) {
+            throw new BankTransactionException("Falsches Passwort");
         }
     }
 
     @Override
     public void requestTransaction(Transaction transaction) throws BankTransactionException {
         try {
-            transactionQueue.add(transaction);
-            // Debug only
-            executeTransactions();
+            BankAccount sender = bankAccountService.loadBankAccountWithIban(transaction.getSenderBankAccount().getIban());
+            BankAccount receiver = bankAccountService.loadBankAccountWithIban(transaction.getReceiverBankAccount().getIban());
+            transaction.setSenderBankAccount(sender);
+            transaction.setReceiverBankAccount(receiver);
+
+            executeTransaction(transaction);
         } catch (UsernameNotFoundException ex) {
             throw new BankTransactionException(ex.getMessage());
         }
     }
 
     @Override
-    public List<Transaction> loadAllTransactionsWithParticipantIban(String participantIban) {
+    public List<Transaction> loadAllTransactionsWithParticipantBankAccount(BankAccount bankAccount) {
         List<Transaction> participatedTransactions = new ArrayList<>();
-        Iterator transactionIterator = transactionRepository.findAll().iterator();
-        transactionIterator.forEachRemaining((t) -> {
-            if (t instanceof Transaction) {
-                Transaction transaction = (Transaction) t;
-                String senderIban = transaction.getSenderBankAccount().getIban();
-                String receiverIban = transaction.getReceiverBankAccount().getIban();
-                if (senderIban.equals(participantIban) || receiverIban.equals(participantIban)) {
-                    participatedTransactions.add(transaction);
-                }
-            }
-        });
+        Iterable<Transaction> transactions = transactionRepository.findAllBySenderBankAccountOrReceiverBankAccount(bankAccount, bankAccount);
+        transactions.forEach(participatedTransactions::add);
 
         return participatedTransactions;
-    }
-
-    protected void executeTransactions() {
-        for (Transaction transaction : transactionQueue) {
-            if (!transaction.isTransactionDone()) {
-                executeTransaction(transaction);
-            }
-        }
     }
 
     @Transactional
@@ -100,5 +98,11 @@ public class TransactionService implements ITransactionService {
         bankAccountRepository.save(receiverAccount);
         transaction.setTransactionDone(true);
         transactionRepository.save(transaction);
+    }
+
+    private boolean isAuthenticatable(long customerAccountId, String password) throws AuthenticationException {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(customerAccountId, password);
+
+        return authenticationManager.authenticate(authToken).isAuthenticated();
     }
 }

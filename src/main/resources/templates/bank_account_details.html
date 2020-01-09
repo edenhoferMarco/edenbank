@@ -106,7 +106,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <select th:field="*{receiverIban}" class="custom-select" id="transactionAccountSelect">
+                                        <select th:field="*{receiverBankAccount.iban}" class="custom-select" id="transactionAccountSelect">
                                             <option th:each="activeBankAccount: ${otherBankAccounts}"
                                                     th:value="${activeBankAccount.getIban()}"
                                                     th:text="${activeBankAccount.getIban()}"></option>
@@ -114,7 +114,7 @@
                                     </div>
                                     <div class="col-2">
                                         <input type="hidden" name="amount" th:value="${bankAccount.getBalance()}" />
-                                        <input type="hidden" name="senderIban" th:value="${bankAccount.getIban()}" />
+                                        <input type="hidden" name="senderBankAccount.iban" th:value="${bankAccount.getIban()}" />
                                         <input type="hidden" name="usageDetails"
                                                th:value="${'Stillegung von Konto: ' + bankAccount.getIban()}" />
                                         <button type="submit" class="btn btn-danger btn-block">Konto stillegen</button>

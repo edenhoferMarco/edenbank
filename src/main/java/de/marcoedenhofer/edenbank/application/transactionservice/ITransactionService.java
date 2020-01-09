@@ -8,5 +8,5 @@ import java.util.List;
 public interface ITransactionService {
     void requestTransaction(TransactionData transactionData) throws BankTransactionException;
     void requestTransaction(Transaction transaction) throws BankTransactionException;
-    List<Transaction> loadAllTransactionsWithParticipantIban(String participantIban);
+    List<Transaction> loadAllTransactionsWithParticipantBankAccount(BankAccount bankAccount);
 }
