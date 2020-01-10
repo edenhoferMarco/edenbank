@@ -9,7 +9,6 @@ public class CheckingAccount extends BankAccount {
     private float toInterestRate;
     private float haveInterestRate;
     private double transactionCost;
-    private double overdraftLimit;
 
     public float getToInterestRate() {
         return toInterestRate;
@@ -35,11 +34,4 @@ public class CheckingAccount extends BankAccount {
         this.transactionCost = transactionCost;
     }
 
-    public double getOverdraftLimit() {
-        return overdraftLimit;
-    }
-
-    public void setOverdraftLimit(double overdraftLimit) {
-        this.overdraftLimit = overdraftLimit;
-    }
 }

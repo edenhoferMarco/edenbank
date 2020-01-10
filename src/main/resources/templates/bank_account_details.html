@@ -130,7 +130,9 @@
             <div class="row pt-3 border-top border-secondary">
                 <div class="col-12">
                     <div class="list-group mb-5" >
-                        <a href="#" th:each="transaction: ${transactions}" class="list-group-item list-group-item-action mb-3">
+                        <a href="#" th:each="transaction: ${transactions}" class="list-group-item list-group-item-action mb-3"
+                           th:href="${'#collapseTransactionNr' + transaction.getTransactionId()}" data-toggle="collapse"
+                           aria-expanded="false" role="button" th:aria-controls="${'#collapseTransactionNr' + transaction.getTransactionId()}">
                             <div class="row">
                                 <div class="col-4">
                                     <p>Sender</p>
@@ -146,7 +148,7 @@
                                     <p th:if="${transaction.getSenderBankAccount().getIban() == bankAccount.getIban()}" th:text="'- ' + ${transaction.getAmount()}" class="text-danger"></p>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row collapse" th:id="${'collapseTransactionNr' + transaction.getTransactionId()}">
                                 <div class="col-12">
                                     <p>Betreff</p>
                                     <p th:text="${transaction.usageDetails}"></p>

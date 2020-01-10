@@ -37,7 +37,7 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public void requestTransaction(TransactionData transactionData) throws BankTransactionException {
+    public TransactionData requestTransaction(TransactionData transactionData) throws BankTransactionException {
         try {
             BankAccount sender = bankAccountService.loadBankAccountWithIban(transactionData.getSenderIban());
             BankAccount receiver = bankAccountService.loadBankAccountWithIban(transactionData.getReceiverIban());
@@ -52,8 +52,11 @@ public class TransactionService implements ITransactionService {
             transaction.setSenderBankAccount(sender);
             transaction.setReceiverBankAccount(receiver);
             transaction.setUsageDetails(transactionData.getUsageDetails());
-
             executeTransaction(transaction);
+
+            transactionData.setSenderCustomerAccountId(0);
+            transactionData.setSenderPassword("");
+            return transactionData;
         } catch (UsernameNotFoundException ex) {
             throw new BankTransactionException(ex.getMessage());
         } catch (AuthenticationException ex) {
@@ -78,26 +81,41 @@ public class TransactionService implements ITransactionService {
     @Override
     public List<Transaction> loadAllTransactionsWithParticipantBankAccount(BankAccount bankAccount) {
         List<Transaction> participatedTransactions = new ArrayList<>();
-        Iterable<Transaction> transactions = transactionRepository.findAllBySenderBankAccountOrReceiverBankAccount(bankAccount, bankAccount);
+        Iterable<Transaction> transactions = transactionRepository.
+                findAllBySenderBankAccountOrReceiverBankAccountOrderByTransactionDateDesc(bankAccount, bankAccount);
         transactions.forEach(participatedTransactions::add);
 
         return participatedTransactions;
     }
 
     @Transactional
-    protected void executeTransaction(Transaction transaction) throws UsernameNotFoundException {
-        BankAccount senderAccount = bankAccountService.loadBankAccountWithId(
-                transaction.getSenderBankAccount().getBankAccountId());
-        BankAccount receiverAccount = bankAccountService.loadBankAccountWithId(
-                transaction.getReceiverBankAccount().getBankAccountId());
+    protected void executeTransaction(Transaction transaction) throws BankTransactionException {
+        try {
+            BankAccount senderAccount = bankAccountService.loadBankAccountWithId(
+                    transaction.getSenderBankAccount().getBankAccountId());
+            BankAccount receiverAccount = bankAccountService.loadBankAccountWithId(
+                    transaction.getReceiverBankAccount().getBankAccountId());
 
-        senderAccount.setBalance(senderAccount.getBalance() - transaction.getAmount());
-        receiverAccount.setBalance((receiverAccount.getBalance() + transaction.getAmount()));
+            if (senderAccount.isArchived() || receiverAccount.isArchived()) {
+                throw new BankTransactionException("Transaktion nicht möglich, Bankkonto ist stillgelegt");
+            }
+            if (senderAccount.getBalance() - transaction.getAmount() < senderAccount.getOverdraftLimit()) {
+                throw new BankTransactionException("Konto " + senderAccount.getIban() +
+                        " hat kein Geld mehr zur Verfügung!");
+            }
 
-        bankAccountRepository.save(senderAccount);
-        bankAccountRepository.save(receiverAccount);
-        transaction.setTransactionDone(true);
-        transactionRepository.save(transaction);
+            transaction.setTransactionDate(Calendar.getInstance().getTime());
+            senderAccount.setBalance(senderAccount.getBalance() - transaction.getAmount());
+            receiverAccount.setBalance((receiverAccount.getBalance() + transaction.getAmount()));
+
+            bankAccountRepository.save(senderAccount);
+            bankAccountRepository.save(receiverAccount);
+            transaction.setTransactionDone(true);
+            transactionRepository.save(transaction);
+        } catch (UsernameNotFoundException ex) {
+            throw new BankTransactionException(ex.getMessage());
+        }
+
     }
 
     private boolean isAuthenticatable(long customerAccountId, String password) throws AuthenticationException {

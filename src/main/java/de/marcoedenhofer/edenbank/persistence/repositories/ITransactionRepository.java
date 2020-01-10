@@ -5,5 +5,5 @@ import de.marcoedenhofer.edenbank.persistence.entities.Transaction;
 import org.springframework.data.repository.CrudRepository;
 
 public interface ITransactionRepository extends CrudRepository<Transaction, Long> {
-    Iterable<Transaction> findAllBySenderBankAccountOrReceiverBankAccount(BankAccount senderBankAccount, BankAccount receiverBankAccount);
+    Iterable<Transaction> findAllBySenderBankAccountOrReceiverBankAccountOrderByTransactionDateDesc(BankAccount senderBankAccount, BankAccount receiverBankAccount);
 }

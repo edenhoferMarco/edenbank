@@ -6,7 +6,7 @@ import de.marcoedenhofer.edenbank.persistence.entities.Transaction;
 import java.util.List;
 
 public interface ITransactionService {
-    void requestTransaction(TransactionData transactionData) throws BankTransactionException;
+    TransactionData requestTransaction(TransactionData transactionData) throws BankTransactionException;
     void requestTransaction(Transaction transaction) throws BankTransactionException;
     List<Transaction> loadAllTransactionsWithParticipantBankAccount(BankAccount bankAccount);
 }

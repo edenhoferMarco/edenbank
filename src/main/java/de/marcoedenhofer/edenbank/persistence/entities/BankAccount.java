@@ -13,6 +13,7 @@ public class BankAccount {
     private String bic;
     private double balance;
     private boolean isArchived = false;
+    private int overdraftLimit = 0;
 
     public long getBankAccountId() {
         return bankAccountId;
@@ -60,5 +61,13 @@ public class BankAccount {
 
     public void setArchived(boolean archived) {
         isArchived = archived;
+    }
+
+    public int getOverdraftLimit() {
+        return overdraftLimit;
+    }
+
+    public void setOverdraftLimit(int overdraftLimit) {
+        this.overdraftLimit = overdraftLimit;
     }
 }
