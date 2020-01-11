@@ -1,14 +1,13 @@
 package de.marcoedenhofer.edenbank.application.transactionservice;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
-import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.BankAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.Transaction;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ITransactionRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,13 +20,13 @@ public class TransactionService implements ITransactionService {
     private final ITransactionRepository transactionRepository;
     private final IBankAccountRepository bankAccountRepository;
     private final IBankAccountService bankAccountService;
-    private final IRegistrationService registrationService;
+    private final ICustomerAccountService registrationService;
     private final AuthenticationManager authenticationManager;
 
     TransactionService(ITransactionRepository transactionRepository,
                        IBankAccountRepository bankAccountRepository,
                        IBankAccountService bankAccountService,
-                       IRegistrationService registrationService,
+                       ICustomerAccountService registrationService,
                        AuthenticationManager authenticationManager) {
         this.transactionRepository = transactionRepository;
         this.bankAccountRepository = bankAccountRepository;

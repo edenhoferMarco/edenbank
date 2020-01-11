@@ -1,15 +1,14 @@
 package de.marcoedenhofer.edenbank.application.bankaccountservice;
 
-import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
-import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,11 +27,11 @@ public class BankAccountService implements IBankAccountService {
 
     private final IBankAccountRepository bankAccountRepository;
     private final ICustomerAccountRepository customerAccountRepository;
-    private final IRegistrationService registrationService;
+    private final ICustomerAccountService registrationService;
 
     public BankAccountService(IBankAccountRepository bankAccountRepository,
                               ICustomerAccountRepository customerAccountRepository,
-                              IRegistrationService registrationService) {
+                              ICustomerAccountService registrationService) {
         this.bankAccountRepository = bankAccountRepository;
         this.customerAccountRepository = customerAccountRepository;
         this.registrationService = registrationService;
@@ -126,6 +125,29 @@ public class BankAccountService implements IBankAccountService {
         } catch (UsernameNotFoundException ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public List<BankAccount> getAllActiveBankAccountsFromCustomerAccount(CustomerAccount customerAccount) {
+        List<BankAccount> activeBankAccounts = new ArrayList<>();
+
+        customerAccount.getBankAccounts().stream()
+                .filter(bankAccount -> !bankAccount.isArchived())
+                .forEach(activeBankAccounts::add);
+
+        return activeBankAccounts;
+    }
+
+    @Override
+    public List<BankAccount> getAllActiveBankAccountsFromCustomerAccountExceptId(CustomerAccount customerAccount,
+                                                                                 long exceptionAccountId) {
+        List<BankAccount> activeBankAccounts = new ArrayList<>();
+
+        customerAccount.getBankAccounts().stream()
+                .filter(bankAccount -> !bankAccount.isArchived() && bankAccount.getBankAccountId() != exceptionAccountId)
+                .forEach(activeBankAccounts::add);
+
+        return activeBankAccounts;
     }
 
     private CheckingAccount createCheckingAccount() {

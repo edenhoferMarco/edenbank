@@ -8,7 +8,6 @@
     <!-- Bootstrap 4 css-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel='stylesheet' type='text/css' media='screen' href="css/main.css">
-    <link rel='stylesheet' type='text/css' media='screen' href="css/create_account.css">
 </head>
 <body>
 <div class="content-container">
@@ -35,7 +34,6 @@
                 </div>
                 <div id="business-customer-form-row" class="row d-none">
                     <div class="col-12">
-                        <!--/*@thymesVar id="businessCustomer" type="de.marcoedenhofer.edenbank.persistence.entities.BusinessCustomer"*/-->
                         <form id="business-customer-form" th:action="@{/create_account/business}" th:object="${businessCustomer}" method="post" class="px-5">
                             <!-- Business Details START -->
                             <div class="row">

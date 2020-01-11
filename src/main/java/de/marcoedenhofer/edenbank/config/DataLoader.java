@@ -1,7 +1,7 @@
 package de.marcoedenhofer.edenbank.config;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
-import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,10 +13,10 @@ import java.text.SimpleDateFormat;
 
 @Component
 public class DataLoader implements ApplicationRunner {
-    private final IRegistrationService registrationService;
+    private final ICustomerAccountService registrationService;
     private final IBankAccountService bankAccountService;
 
-    public DataLoader(IRegistrationService registrationService,
+    public DataLoader(ICustomerAccountService registrationService,
                       IBankAccountService bankAccountService) {
         this.registrationService = registrationService;
         this.bankAccountService = bankAccountService;

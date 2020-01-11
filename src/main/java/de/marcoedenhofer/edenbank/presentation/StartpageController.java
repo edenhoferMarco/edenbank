@@ -8,6 +8,6 @@ public class StartpageController {
 
     @RequestMapping("/")
     public String index() {
-        return "index";
+        return "redirect:overview";
     }
 }

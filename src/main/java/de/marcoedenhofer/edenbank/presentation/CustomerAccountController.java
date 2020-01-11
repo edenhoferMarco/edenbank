@@ -1,8 +1,7 @@
 package de.marcoedenhofer.edenbank.presentation;
 
-import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
@@ -15,16 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @Scope("session")
 public class CustomerAccountController {
-    private final IRegistrationService registrationService;
+    private final ICustomerAccountService registrationService;
     private final UserDetailsService userDetailsService;
 
 
-    public CustomerAccountController(IRegistrationService registrationService,
+    public CustomerAccountController(ICustomerAccountService registrationService,
                                      @Qualifier("security")UserDetailsService userDetailsService) {
         this.registrationService = registrationService;
         this.userDetailsService = userDetailsService;

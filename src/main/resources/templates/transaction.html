@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap 4 css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' media='screen' href="/css/main.css">
+    <link rel='stylesheet' type='text/css' media='screen' href="/css/overview.css">
+</head>
+<body>
+
+<div class="content-container">
+    <nav th:replace="fragments/navbar.html :: navbar"> </nav>
+    <div class="background-container">
+        <div class="container pt-2">
+            <form th:action="@{/transaction/execute}" method="post" th:object="${transaction}">
+                <div class="row">
+                    <div class="col-4">
+                        <label class="" for="transactionAccountSelect">Senderkonto</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <select th:field="*{senderBankAccount.iban}" class="custom-select" id="transactionAccountSelect">
+                            <option th:each="activeBankAccount: ${bankAccounts}"
+                                    th:value="${activeBankAccount.getIban()}"
+                                    th:text="${activeBankAccount.getIban()}"></option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+</body>
+<!-- JS for Bootstrap Modal -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</html>

@@ -1,16 +1,10 @@
 package de.marcoedenhofer.edenbank.presentation;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
-import de.marcoedenhofer.edenbank.application.registrationservice.IRegistrationService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.application.transactionservice.BankTransactionException;
 import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
-import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
-import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
-import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,14 +20,14 @@ import java.util.List;
 @Controller
 public class BankAccountController {
     private final IBankAccountService bankAccountService;
-    private final IRegistrationService registrationService;
+    private final ICustomerAccountService customerAccountService;
     private final ITransactionService transactionService;
 
     public BankAccountController(IBankAccountService bankAccountService,
-                                 IRegistrationService registrationService,
+                                 ICustomerAccountService customerAccountService,
                                  ITransactionService transactionService) {
         this.bankAccountService = bankAccountService;
-        this.registrationService = registrationService;
+        this.customerAccountService = customerAccountService;
         this.transactionService = transactionService;
     }
 
@@ -75,12 +69,13 @@ public class BankAccountController {
                                         @PathVariable("bankAccountId") long bankAccountId,
                                         Principal principal) {
         String customerAccountId = principal.getName();
-        CustomerAccount customerAccount = registrationService.loadCustomerAccountWithId(Long.parseLong(customerAccountId));
+        CustomerAccount customerAccount = customerAccountService.loadCustomerAccountWithId(Long.parseLong(customerAccountId));
         BankAccount bankAccount = bankAccountService.loadBankAccountWithId(bankAccountId);
         Customer customerDetails = customerAccount.getCustomerDetails();
 
-        if (customerOwnsBankAccountWithId(customerAccount, bankAccountId)) {
-            List<BankAccount> activeBankAccounts = getAllActiveBankAccountsFromCustomerExceptId(customerAccount,bankAccountId);
+        if (customerAccountService.customerAccountOwnsBankAccountWithId(customerAccount,bankAccountId)) {
+            List<BankAccount> activeBankAccounts =
+                    bankAccountService.getAllActiveBankAccountsFromCustomerAccountExceptId(customerAccount,bankAccountId);
             Boolean isBusinessCustomer = customerDetails instanceof BusinessCustomer;
             List<Transaction> transactions = transactionService.loadAllTransactionsWithParticipantBankAccount(bankAccount);
 
@@ -95,34 +90,11 @@ public class BankAccountController {
             model.addAttribute("isBusinessCustomer", isBusinessCustomer);
             model.addAttribute("transactions", transactions);
             model.addAttribute("transactionData", new Transaction());
+
             return "bank_account_details";
         } else {
             return "redirect:/overview";
         }
-
     }
-
-    private Boolean customerOwnsBankAccountWithId(CustomerAccount customer, long bankAccountId) {
-        for (BankAccount bankAccount : customer.getBankAccounts()) {
-            if (bankAccount.getBankAccountId() == bankAccountId) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private List<BankAccount> getAllActiveBankAccountsFromCustomerExceptId(CustomerAccount customerAccount, long exceptionId) {
-        List<BankAccount> bankAccounts = new ArrayList<>();
-
-        for (BankAccount bankAccount : customerAccount.getBankAccounts()) {
-            if (!bankAccount.isArchived() && bankAccount.getBankAccountId() != exceptionId) {
-                bankAccounts.add(bankAccount);
-            }
-        }
-
-        return bankAccounts;
-    }
-
 
 }
