@@ -4,6 +4,7 @@ import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountSer
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.application.transactionservice.BankTransactionException;
 import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
+import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,12 +51,12 @@ public class BankAccountController {
     }
 
     @RequestMapping(value = "/bank_account/archive", method = RequestMethod.POST)
-    public String registerTransaction(@ModelAttribute("transaction") Transaction transaction,
+    public String registerTransaction(@ModelAttribute("transaction") TransactionData transactionData,
                                       RedirectAttributes redirectAttributes) {
         try {
-            transactionService.requestTransaction(transaction);
-            BankAccount bankAccount = bankAccountService.loadBankAccountWithIban(transaction
-                    .getSenderBankAccount().getIban());
+            transactionService.requestInternalTransaction(transactionData);
+            BankAccount bankAccount = bankAccountService.loadBankAccountWithIban(transactionData
+                    .getSenderIban());
             bankAccountService.archiveBankAccount(bankAccount);
         } catch (BankTransactionException e) {
             // TODO
@@ -89,7 +90,7 @@ public class BankAccountController {
             model.addAttribute("customerDetails", customerDetails);
             model.addAttribute("isBusinessCustomer", isBusinessCustomer);
             model.addAttribute("transactions", transactions);
-            model.addAttribute("transactionData", new Transaction());
+            model.addAttribute("transactionData", new TransactionData());
 
             return "bank_account_details";
         } else {

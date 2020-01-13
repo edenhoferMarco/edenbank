@@ -109,7 +109,7 @@
                                         </div>
                                         <div class="col-4">
                                             <p>Kontostand</p>
-                                            <p th:text="${checkingAccount.getBalance()} + ' €'" th:class="${checkingAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
+                                            <p th:text="${ #numbers.formatCurrency( checkingAccount.getBalance() / 100.0 ) }" th:class="${checkingAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
                                         </div>
                                     </div>
                                 </a>
@@ -137,7 +137,7 @@
                                         </div>
                                         <div class="col-4">
                                             <p>Kontostand</p>
-                                            <p th:text="${savingsAccount.getBalance()} + ' €'" th:class="${savingsAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
+                                            <p th:text="${ #numbers.formatCurrency( savingsAccount.getBalance() / 100.0 ) }" th:class="${savingsAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
                                         </div>
                                     </div>
                                 </a>
@@ -166,7 +166,7 @@
                                         </div>
                                         <div class="col-4">
                                             <p>Kontostand</p>
-                                            <p th:text="${fixedDepositAccount.getBalance()} + ' €'" th:class="${fixedDepositAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
+                                            <p th:text="${ #numbers.formatCurrency( fixedDepositAccount.getBalance() / 100.0 ) }" th:class="${fixedDepositAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
                                         </div>
                                     </div>
                                 </a>

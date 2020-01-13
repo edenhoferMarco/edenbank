@@ -16,23 +16,50 @@
     <nav th:replace="fragments/navbar.html :: navbar"> </nav>
     <div class="background-container">
         <div class="container pt-2">
-            <form th:action="@{/transaction/execute}" method="post" th:object="${transaction}">
-                <div class="row">
-                    <div class="col-4">
-                        <label class="" for="transactionAccountSelect">Senderkonto</label>
-                    </div>
+            <div class="row mt-5">
+                <div class="col-12 form-container m-5 justify-content-center">
+                    <form th:action="@{/transaction/execute}" method="post" th:object="${transactionData}">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row pb-5 justify-content-center">
+                                    <div class="col-4">
+                                        <label class="" for="transactionAccountSelect">Senderkonto:</label>
+                                        <select th:field="*{senderIban}" class="custom-select" id="transactionAccountSelect">
+                                            <option th:each="activeBankAccount: ${bankAccounts}"
+                                                    th:value="${activeBankAccount.getIban()}"
+                                                    th:text="${activeBankAccount.getIban()}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="receiverIbanInput">Empfänger IBAN:</label>
+                                        <input th:field="*{receiverIban}" type="text" class="form-control" id="receiverIbanInput">
+                                    </div>
+                                </div>
+                                <div class="row pb-5 justify-content-center">
+                                    <div class="col-4">
+                                        <label for="amountInput">Betrag:</label>
+                                        <input th:field="*{amount}" type="text" class="form-control" id="amountInput">
+                                    </div>
+                                    <div class="col-4">
+                                        <!-- spacer -->
+                                    </div>
+                                </div>
+                                <div class="row pb-5 justify-content-center">
+                                    <div class="col-8">
+                                        <label for="usageDetailsInput">Verwendungszweck:</label>
+                                        <input th:field="*{usageDetails}" type="text" class="form-control" id="usageDetailsInput">
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center mt-5">
+                                    <div class="col-8 justify-content-center d-flex">
+                                        <button type="submit" class="btn btn-primary px-5">Transaktion tätigen</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-4">
-                        <select th:field="*{senderBankAccount.iban}" class="custom-select" id="transactionAccountSelect">
-                            <option th:each="activeBankAccount: ${bankAccounts}"
-                                    th:value="${activeBankAccount.getIban()}"
-                                    th:text="${activeBankAccount.getIban()}"></option>
-                        </select>
-                    </div>
-                </div>
-            </form>
-
+            </div>
         </div>
     </div>
 </div>

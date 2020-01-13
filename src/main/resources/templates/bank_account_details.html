@@ -82,7 +82,7 @@
                         </div>
                         <div class="col-4">
                             <p class="text-secondary">Kontostand</p>
-                            <p class="h5" th:text="${bankAccount.getBalance()} + ' €'" th:classappend="${bankAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
+                            <p class="h5" th:text="${ #numbers.formatCurrency( bankAccount.getBalance() / 100.0 ) }" th:classappend="${bankAccount.getBalance() >= 0.00} ? 'text-success' : 'text-danger'"></p>
                         </div>
                         <div class="col-2">
                             <button class="btn btn-outline-primary btn-block" type="button" data-toggle="modal"
@@ -106,15 +106,15 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <select th:field="*{receiverBankAccount.iban}" class="custom-select" id="transactionAccountSelect">
+                                        <select th:field="*{receiverIban}" class="custom-select" id="transactionAccountSelect">
                                             <option th:each="activeBankAccount: ${otherBankAccounts}"
                                                     th:value="${activeBankAccount.getIban()}"
                                                     th:text="${activeBankAccount.getIban()}"></option>
                                         </select>
                                     </div>
                                     <div class="col-2">
-                                        <input type="hidden" name="amount" th:value="${bankAccount.getBalance()}" />
-                                        <input type="hidden" name="senderBankAccount.iban" th:value="${bankAccount.getIban()}" />
+                                        <input type="hidden" name="amount" th:value="${bankAccount.getBalance() / 100.00}" />
+                                        <input type="hidden" name="senderIban" th:value="${bankAccount.getIban()}" />
                                         <input type="hidden" name="usageDetails"
                                                th:value="${'Stillegung von Konto: ' + bankAccount.getIban()}" />
                                         <button type="submit" class="btn btn-danger btn-block">Konto stillegen</button>
@@ -144,8 +144,8 @@
                                 </div>
                                 <div class="col-4">
                                     <p>Betrag</p>
-                                    <p th:if="${transaction.getReceiverBankAccount().getIban() == bankAccount.getIban()}" th:text="'+ ' + ${transaction.getAmount()}" class="text-success"></p>
-                                    <p th:if="${transaction.getSenderBankAccount().getIban() == bankAccount.getIban()}" th:text="'- ' + ${transaction.getAmount()}" class="text-danger"></p>
+                                    <p th:if="${transaction.getReceiverBankAccount().getIban() == bankAccount.getIban()}" th:text="'+ ' + ${ #numbers.formatCurrency( transaction.getAmount() / 100.0 ) }" class="text-success"></p>
+                                    <p th:if="${transaction.getSenderBankAccount().getIban() == bankAccount.getIban()}" th:text="'- ' + ${ #numbers.formatCurrency( transaction.getAmount() / 100.0 ) }" class="text-danger"></p>
                                 </div>
                             </div>
                             <div class="row collapse" th:id="${'collapseTransactionNr' + transaction.getTransactionId()}">

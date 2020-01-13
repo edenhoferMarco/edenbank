@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ITransactionService {
     TransactionData requestTransaction(TransactionData transactionData) throws BankTransactionException;
-    void requestTransaction(Transaction transaction) throws BankTransactionException;
+    void requestInternalTransaction(TransactionData transactionData) throws BankTransactionException;
     List<Transaction> loadAllTransactionsWithParticipantBankAccount(BankAccount bankAccount);
 }

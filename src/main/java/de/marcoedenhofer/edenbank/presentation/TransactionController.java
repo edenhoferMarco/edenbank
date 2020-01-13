@@ -47,14 +47,19 @@ public class TransactionController {
         List<BankAccount> activeBankAccounts = bankAccountService.getAllActiveBankAccountsFromCustomerAccount(customerAccount);
 
         model.addAttribute("bankAccounts", activeBankAccounts);
-        model.addAttribute("transaction", new Transaction());
+        model.addAttribute("transactionData", new TransactionData());
 
         return "transaction";
     }
 
     @RequestMapping(value = "/transaction/execute", method = RequestMethod.POST)
-    public String executeNewTransaction(@ModelAttribute Transaction transaction) {
+    public String executeNewTransaction(@ModelAttribute TransactionData transactionData) {
+        try {
+            transactionService.requestInternalTransaction(transactionData);
+        } catch (BankTransactionException e) {
+            e.printStackTrace();
+        }
 
-        return "redirect:overview";
+        return "redirect:/overview";
     }
 }

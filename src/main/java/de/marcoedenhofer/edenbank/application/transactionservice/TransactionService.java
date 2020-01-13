@@ -46,15 +46,11 @@ public class TransactionService implements ITransactionService {
                 throw new BankTransactionException("Falsches Passwort");
             }
 
-            Transaction transaction = new Transaction();
-            transaction.setAmount(transactionData.getAmount());
-            transaction.setSenderBankAccount(sender);
-            transaction.setReceiverBankAccount(receiver);
-            transaction.setUsageDetails(transactionData.getUsageDetails());
+            Transaction transaction = buildTransaction(transactionData,sender, receiver);
             executeTransaction(transaction);
-
             transactionData.setSenderCustomerAccountId(0);
             transactionData.setSenderPassword("");
+
             return transactionData;
         } catch (UsernameNotFoundException ex) {
             throw new BankTransactionException(ex.getMessage());
@@ -64,12 +60,11 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public void requestTransaction(Transaction transaction) throws BankTransactionException {
+    public void requestInternalTransaction(TransactionData transactionData) throws BankTransactionException {
         try {
-            BankAccount sender = bankAccountService.loadBankAccountWithIban(transaction.getSenderBankAccount().getIban());
-            BankAccount receiver = bankAccountService.loadBankAccountWithIban(transaction.getReceiverBankAccount().getIban());
-            transaction.setSenderBankAccount(sender);
-            transaction.setReceiverBankAccount(receiver);
+            BankAccount sender = bankAccountService.loadBankAccountWithIban(transactionData.getSenderIban());
+            BankAccount receiver = bankAccountService.loadBankAccountWithIban(transactionData.getReceiverIban());
+            Transaction transaction = buildTransaction(transactionData,sender, receiver);
 
             executeTransaction(transaction);
         } catch (UsernameNotFoundException ex) {
@@ -85,6 +80,18 @@ public class TransactionService implements ITransactionService {
         transactions.forEach(participatedTransactions::add);
 
         return participatedTransactions;
+    }
+
+    private Transaction buildTransaction(TransactionData transactionData, BankAccount sender, BankAccount receiver) {
+        Transaction transaction = new Transaction();
+
+        int amountInInteger = makeIntegerFromDouble(transactionData.getAmount());
+        transaction.setAmount(amountInInteger);
+        transaction.setSenderBankAccount(sender);
+        transaction.setReceiverBankAccount(receiver);
+        transaction.setUsageDetails(transactionData.getUsageDetails());
+
+        return transaction;
     }
 
     @Transactional
@@ -121,5 +128,10 @@ public class TransactionService implements ITransactionService {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(customerAccountId, password);
 
         return authenticationManager.authenticate(authToken).isAuthenticated();
+    }
+
+    private int makeIntegerFromDouble(double input) {
+        Double conversionValue = input * 100;
+        return conversionValue.intValue();
     }
 }

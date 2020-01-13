@@ -8,7 +8,7 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long transactionId;
-    private double amount;
+    private int amount;
     private String usageDetails;
     @Temporal(TemporalType.TIMESTAMP)
     private Date transactionDate;
@@ -26,11 +26,11 @@ public class Transaction {
         this.transactionId = transactionId;
     }
 
-    public double getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 

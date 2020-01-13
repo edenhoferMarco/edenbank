@@ -11,7 +11,7 @@ public class BankAccount {
     private int bankCode;
     private String iban;
     private String bic;
-    private double balance;
+    private int balance;
     private boolean isArchived = false;
     private int overdraftLimit = 0;
 
@@ -47,11 +47,11 @@ public class BankAccount {
         this.bic = bic;
     }
 
-    public double getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 
