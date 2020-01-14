@@ -1,5 +1,6 @@
 package de.marcoedenhofer.edenbank.persistence.entities;
 
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -23,6 +24,7 @@ public class CustomerAccount implements UserDetails {
     @OneToMany
     private List<BankAccount> bankAccounts = new ArrayList<>();
     @OneToOne
+    @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
     private Customer customerDetails;
 
     public long getCustomerAccountId() {

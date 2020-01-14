@@ -20,7 +20,6 @@ public class TransactionService implements ITransactionService {
     private final ITransactionRepository transactionRepository;
     private final IBankAccountRepository bankAccountRepository;
     private final IBankAccountService bankAccountService;
-    private final ICustomerAccountService registrationService;
     private final AuthenticationManager authenticationManager;
 
     TransactionService(ITransactionRepository transactionRepository,
@@ -31,7 +30,6 @@ public class TransactionService implements ITransactionService {
         this.transactionRepository = transactionRepository;
         this.bankAccountRepository = bankAccountRepository;
         this.bankAccountService = bankAccountService;
-        this.registrationService = registrationService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -41,7 +39,7 @@ public class TransactionService implements ITransactionService {
             BankAccount sender = bankAccountService.loadBankAccountWithIban(transactionData.getSenderIban());
             BankAccount receiver = bankAccountService.loadBankAccountWithIban(transactionData.getReceiverIban());
 
-            if (!isAuthenticatable(transactionData.getSenderCustomerAccountId(),
+            if (!canAuthenticate(transactionData.getSenderCustomerAccountId(),
                     transactionData.getSenderPassword())) {
                 throw new BankTransactionException("Falsches Passwort");
             }
@@ -124,7 +122,7 @@ public class TransactionService implements ITransactionService {
 
     }
 
-    private boolean isAuthenticatable(long customerAccountId, String password) throws AuthenticationException {
+    private boolean canAuthenticate(long customerAccountId, String password) throws AuthenticationException {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(customerAccountId, password);
 
         return authenticationManager.authenticate(authToken).isAuthenticated();

@@ -77,9 +77,9 @@ public class BankAccountController {
         if (customerAccountService.customerAccountOwnsBankAccountWithId(customerAccount,bankAccountId)) {
             List<BankAccount> activeBankAccounts =
                     bankAccountService.getAllActiveBankAccountsFromCustomerAccountExceptId(customerAccount,bankAccountId);
-            Boolean isBusinessCustomer = customerDetails instanceof BusinessCustomer;
             List<Transaction> transactions = transactionService.loadAllTransactionsWithParticipantBankAccount(bankAccount);
 
+            Boolean isBusinessCustomer = customerDetails instanceof BusinessCustomer;
             if (isBusinessCustomer) {
                 BusinessCustomer businessCustomerDetails = (BusinessCustomer) customerDetails;
                 model.addAttribute("businessCustomerDetails", businessCustomerDetails);

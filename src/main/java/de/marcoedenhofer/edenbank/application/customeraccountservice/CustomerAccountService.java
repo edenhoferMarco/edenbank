@@ -31,7 +31,7 @@ public class CustomerAccountService implements ICustomerAccountService {
 
     @Override
     public CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer) {
-        customer = this.customerRepository.save(customer);
+        customer = customerRepository.save(customer);
 
         // TODO: call elyes for postident
 
@@ -40,11 +40,11 @@ public class CustomerAccountService implements ICustomerAccountService {
     }
 
     @Override
-    public void createBusinessCustomerAccount(BusinessCustomer customer) {
-        this.customerRepository.save(customer);
+    public CustomerAccount createBusinessCustomerAccount(BusinessCustomer customer) {
+        customer = customerRepository.save(customer);
 
         CustomerAccount account = createCustomerAccount(BUSINESS_MANAGEMENT_FEE, customer);
-        customerAccountRepository.save(account);
+        return customerAccountRepository.save(account);
     }
 
     @Override

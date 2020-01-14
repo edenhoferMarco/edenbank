@@ -1,9 +1,15 @@
 package de.marcoedenhofer.edenbank.application.bankaccountservice;
 
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
+import de.marcoedenhofer.edenbank.application.transactionservice.BankTransactionException;
+import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
+import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
+import org.hibernate.TransactionException;
+import org.hibernate.mapping.Array;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +23,18 @@ public class BankAccountService implements IBankAccountService {
     private final int BANK_CODE = 75030011;
     private final String BIC = "BYEBDEM1RBG";
 
+    private final String EDENBANK_ACCOUNT_IBAN = "DE750300110000000004";
+
     // constants for CheckingAccount
-    private final double OVERDRAFT_LIMIT_PRIVATE = 1000.00;
-    private final double OVERDRAFT_LIMIT_BUSINESS = 4000.00;
+    private final int OVERDRAFT_LIMIT_PRIVATE = 1000;
+    private final int OVERDRAFT_LIMIT_BUSINESS = 4000;
     private final float TO_INTEREST_RATE = 0.0f;
     private final float HAVE_INTEREST_RATE = 12.5f;
-    private final double TRANSACTION_COST_PRIVATE = 0.0;
-    private final double TRANSACTION_COST_BUSINESS = 0.50;
+    private final int TRANSACTION_COST_PRIVATE = 0;
+    private final int TRANSACTION_COST_BUSINESS = 50;
+
+    // constants for SavingsAccount
+    private final float SAVINGS_ACCOUNT_INTEREST_RATE = 1f;
 
     private final IBankAccountRepository bankAccountRepository;
     private final ICustomerAccountRepository customerAccountRepository;
@@ -56,8 +67,9 @@ public class BankAccountService implements IBankAccountService {
         try {
             CustomerAccount customerAccount = registrationService.loadCustomerAccountWithId(
                     passedAccount.getCustomerAccountId());
-            SavingsAccount checkingAccount = createSavingsAccount();
-            customerAccount.getBankAccounts().add(checkingAccount);
+            SavingsAccount account = createSavingsAccount();
+            account.setInterestRate(SAVINGS_ACCOUNT_INTEREST_RATE);
+            customerAccount.getBankAccounts().add(account);
             customerAccountRepository.save(customerAccount);
         } catch (UsernameNotFoundException usernameEx) {
             // TODO
@@ -69,8 +81,8 @@ public class BankAccountService implements IBankAccountService {
         try {
             CustomerAccount customerAccount = registrationService.loadCustomerAccountWithId(
                     passedAccount.getCustomerAccountId());
-            FixedDepositAccount checkingAccount = createFixedDepositAccount();
-            customerAccount.getBankAccounts().add(checkingAccount);
+            FixedDepositAccount account = createFixedDepositAccount();
+            customerAccount.getBankAccounts().add(account);
             customerAccountRepository.save(customerAccount);
         } catch (UsernameNotFoundException usernameEx) {
             // TODO
@@ -148,6 +160,19 @@ public class BankAccountService implements IBankAccountService {
                 .forEach(activeBankAccounts::add);
 
         return activeBankAccounts;
+    }
+
+    @Override
+    public List<SavingsAccount> getAllActiveSavingsAccounts() {
+        List<SavingsAccount> savingsAccounts = new ArrayList<>();
+
+        bankAccountRepository.findAll().forEach(account -> {
+            if (account instanceof SavingsAccount && !account.isArchived()) {
+                savingsAccounts.add((SavingsAccount) account);
+            }
+        });
+
+        return savingsAccounts;
     }
 
     private CheckingAccount createCheckingAccount() {

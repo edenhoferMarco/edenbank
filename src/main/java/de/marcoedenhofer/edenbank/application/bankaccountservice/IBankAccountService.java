@@ -15,4 +15,5 @@ public interface IBankAccountService {
     List<BankAccount> getAllActiveBankAccountsFromCustomerAccount(CustomerAccount customerAccount);
     List<BankAccount> getAllActiveBankAccountsFromCustomerAccountExceptId(CustomerAccount customerAccount,
                                                                           long exceptionAccountId);
+    List<SavingsAccount> getAllActiveSavingsAccounts();
 }
