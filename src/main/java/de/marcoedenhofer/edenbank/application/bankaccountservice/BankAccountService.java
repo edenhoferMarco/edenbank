@@ -1,15 +1,9 @@
 package de.marcoedenhofer.edenbank.application.bankaccountservice;
 
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
-import de.marcoedenhofer.edenbank.application.transactionservice.BankTransactionException;
-import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
-import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
-import org.hibernate.TransactionException;
-import org.hibernate.mapping.Array;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,21 +32,21 @@ public class BankAccountService implements IBankAccountService {
 
     private final IBankAccountRepository bankAccountRepository;
     private final ICustomerAccountRepository customerAccountRepository;
-    private final ICustomerAccountService registrationService;
+    private final ICustomerAccountService customerAccountService;
 
     public BankAccountService(IBankAccountRepository bankAccountRepository,
                               ICustomerAccountRepository customerAccountRepository,
                               ICustomerAccountService registrationService) {
         this.bankAccountRepository = bankAccountRepository;
         this.customerAccountRepository = customerAccountRepository;
-        this.registrationService = registrationService;
+        this.customerAccountService = registrationService;
     }
 
 
     @Override
     public void createCheckingAccountForCustomerAccount(CustomerAccount passedAccount) {
         try {
-            CustomerAccount customerAccount = registrationService.loadCustomerAccountWithId(
+            CustomerAccount customerAccount = customerAccountService.loadCustomerAccountWithId(
                     passedAccount.getCustomerAccountId());
             CheckingAccount checkingAccount = createCheckingAccount();
             customerAccount.getBankAccounts().add(checkingAccount);
@@ -65,7 +59,7 @@ public class BankAccountService implements IBankAccountService {
     @Override
     public void createSavingsAccountForCustomerAccount(CustomerAccount passedAccount) {
         try {
-            CustomerAccount customerAccount = registrationService.loadCustomerAccountWithId(
+            CustomerAccount customerAccount = customerAccountService.loadCustomerAccountWithId(
                     passedAccount.getCustomerAccountId());
             SavingsAccount account = createSavingsAccount();
             account.setInterestRate(SAVINGS_ACCOUNT_INTEREST_RATE);
@@ -79,7 +73,7 @@ public class BankAccountService implements IBankAccountService {
     @Override
     public void createFixedDepositAccountForCustomerAccount(CustomerAccount passedAccount) {
         try {
-            CustomerAccount customerAccount = registrationService.loadCustomerAccountWithId(
+            CustomerAccount customerAccount = customerAccountService.loadCustomerAccountWithId(
                     passedAccount.getCustomerAccountId());
             FixedDepositAccount account = createFixedDepositAccount();
             customerAccount.getBankAccounts().add(account);
@@ -92,7 +86,7 @@ public class BankAccountService implements IBankAccountService {
     @Override
     public void createCheckingAccountWithFixedBudged(CustomerAccount passedAccount, int budget) {
         try {
-            CustomerAccount customerAccount = registrationService.loadCustomerAccountWithId(
+            CustomerAccount customerAccount = customerAccountService.loadCustomerAccountWithId(
                     passedAccount.getCustomerAccountId());
             CheckingAccount checkingAccount = createCheckingAccount();
 

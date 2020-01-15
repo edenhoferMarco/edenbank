@@ -1,7 +1,9 @@
 package de.marcoedenhofer.edenbank.config;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.GiveawayException;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.PostIdentException;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
 import org.springframework.boot.ApplicationArguments;
@@ -32,7 +34,7 @@ public class DataLoader implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         long count = customerAccountRepository.count();
 
-        // only create data once.
+        // only create data once, if no entry is in database.
         if (count < 2) {
             createEdenbankAccount();
             createDummyCustomerAccount();
@@ -61,8 +63,12 @@ public class DataLoader implements ApplicationRunner {
         customer.setPersonalData(personalData);
 
 
-
-        CustomerAccount customerAccount = registrationService.createPrivateCustomerAccount(customer);
+        CustomerAccount customerAccount = null;
+        try {
+            customerAccount = registrationService.createPrivateCustomerAccount(customer);
+        } catch (PostIdentException e) {
+            e.printStackTrace();
+        }
         bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,100000);
 
     }

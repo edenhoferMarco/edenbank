@@ -1,10 +1,12 @@
 package de.marcoedenhofer.edenbank.application.customeraccountservice;
 
+import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,7 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Qualifier("security")
 public class CustomerAccountService implements ICustomerAccountService {
-    private final double PRIVATE_MANAGEMENT_FEE = 20;
+    private final long EDENBANK_ACCOUNT_ID = 1;
+    private final double PRIVATE_MANAGEMENT_FEE = 0.0;
     private final double BUSINESS_MANAGEMENT_FEE = 150;
 
     private final ICustomerRepository customerRepository;
@@ -30,12 +33,20 @@ public class CustomerAccountService implements ICustomerAccountService {
     }
 
     @Override
-    public CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer) {
+    public CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer)
+            throws PostIdentException {
         customer = customerRepository.save(customer);
 
-        // TODO: call elyes for postident
-
-        CustomerAccount account = createCustomerAccount(PRIVATE_MANAGEMENT_FEE, customer);
+        if (!customerIsIdentifiedViaPostIdent(customer)) {
+            throw new PostIdentException(customer.getPersonalData().getFormOfAddress() + " "
+                    + customer.getPersonalData().getFirstname() + " "
+                    + customer.getPersonalData().getLastname() +
+                    " konnte nicht durch unseren Partner identifiziert werden"
+            );
+        }
+        customer.setIdentified(true);
+        customer = customerRepository.save(customer);
+        CustomerAccount account = buildCustomerAccount(PRIVATE_MANAGEMENT_FEE, customer);
         return customerAccountRepository.save(account);
     }
 
@@ -43,8 +54,18 @@ public class CustomerAccountService implements ICustomerAccountService {
     public CustomerAccount createBusinessCustomerAccount(BusinessCustomer customer) {
         customer = customerRepository.save(customer);
 
-        CustomerAccount account = createCustomerAccount(BUSINESS_MANAGEMENT_FEE, customer);
+        CustomerAccount account = buildCustomerAccount(BUSINESS_MANAGEMENT_FEE, customer);
         return customerAccountRepository.save(account);
+    }
+
+    @Override
+    public void callGiveawayService(CustomerAccount customerAccount) throws GiveawayException {
+        // TODO call fatih for giveaway
+        boolean giveawayServiceFailed = true;
+        if (giveawayServiceFailed) {
+            throw new GiveawayException("Es tut uns leid, unser Partnerservice für Geschenke ist ausgefallen. " +
+                    "Sie erhalten Ihr Geschenk sobald er wieder verfügbar ist!");
+        }
     }
 
     @Override
@@ -85,7 +106,7 @@ public class CustomerAccountService implements ICustomerAccountService {
         return false;
     }
 
-    private CustomerAccount createCustomerAccount(double managementFee, Customer customer) {
+    private CustomerAccount buildCustomerAccount(double managementFee, Customer customer) {
         CustomerAccount account = new CustomerAccount();
         account.setArchived(false);
         // for now use firstname as password
@@ -95,5 +116,44 @@ public class CustomerAccountService implements ICustomerAccountService {
         account.setCustomerDetails(customer);
 
         return account;
+    }
+
+    /*
+    private void checkForNewIdentifiedCustomers() {
+        customerRepository.findAllByIdentifiedTrue()
+                .forEach(customer -> {
+                    if (customerIsIdentifiedViaPostIdent(customer)) {
+                        customer.setIdentified(true);
+                        customer = customerRepository.save(customer);
+                        CustomerAccount customerAccount = buildCustomerAccount(PRIVATE_MANAGEMENT_FEE, customer);
+                        customerAccountRepository.save(customerAccount);
+
+                        // If a customer is identified, he will receive an email with his credential.
+                        // This functionality, however, is out of scope for this project.
+                        // sendEmailNotification(customer.getEmail());
+                    }
+                });
+    } */
+
+    private boolean customerIsIdentifiedViaPostIdent(Customer customer) {
+        // TODO: call elyes for postident
+
+        return true;
+    }
+
+    // TODO: implement management fee booking
+    private void bookManagementFee() {
+        customerAccountRepository.findById(EDENBANK_ACCOUNT_ID).ifPresent(edenbankAccount -> {
+            if (edenbankAccount.getBankAccounts().isEmpty()) {
+                return;
+            } else {
+                BankAccount edenbankCheckingAccount = edenbankAccount.getBankAccounts().get(0);
+                customerAccountRepository.findAllByCustomerAccountIdNot(EDENBANK_ACCOUNT_ID)
+                        .forEach(customerAccount -> {
+
+                        });
+            }
+        });
+
     }
 }

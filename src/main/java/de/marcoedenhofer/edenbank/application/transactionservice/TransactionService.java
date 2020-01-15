@@ -25,7 +25,6 @@ public class TransactionService implements ITransactionService {
     TransactionService(ITransactionRepository transactionRepository,
                        IBankAccountRepository bankAccountRepository,
                        IBankAccountService bankAccountService,
-                       ICustomerAccountService registrationService,
                        AuthenticationManager authenticationManager) {
         this.transactionRepository = transactionRepository;
         this.bankAccountRepository = bankAccountRepository;

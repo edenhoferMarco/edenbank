@@ -11,6 +11,7 @@ public class Customer {
     @NonNull
     private String email;
     private PersonalData personalData;
+    private boolean isIdentified = false;
 
     public Customer() {
     }
@@ -29,5 +30,13 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isIdentified() {
+        return isIdentified;
+    }
+
+    public void setIdentified(boolean identified) {
+        isIdentified = identified;
     }
 }

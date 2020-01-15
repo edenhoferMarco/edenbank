@@ -13,6 +13,24 @@
 <div class="content-container">
     <nav th:replace="fragments/navbar.html :: navbar"> </nav>
     <div class="container mt-5">
+        <!--/*@thymesVar id="accountCreationMessage" type="java.lang.String"*/-->
+        <div th:if="${accountCreationMessage} != null" class="row justify-content-center">
+            <div class="col-12">
+                <div class="alert alert-success" role="alert" th:text="${accountCreationMessage}"></div>
+            </div>
+        </div>
+        <!--/*@thymesVar id="postIdentError" type="java.lang.String"*/-->
+        <div th:if="${postIdentError} != null" class="row justify-content-center">
+            <div class="col-12">
+                <div class="alert alert-danger" role="alert" th:text="${postIdentError}"></div>
+            </div>
+        </div>
+        <!--/*@thymesVar id="giveawayServiceError" type="java.lang.String"*/-->
+        <div th:if="${giveawayServiceError} != null" class="row justify-content-center">
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert" th:text="${giveawayServiceError}"></div>
+            </div>
+        </div>
         <div class="row mt-5 justify-content-center">
             <div class="col-4 form-container m-5">
                 <form th:action="@{/login}" th:method="post" class="p-5">

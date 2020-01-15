@@ -1,7 +1,9 @@
 package de.marcoedenhofer.edenbank.presentation;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.GiveawayException;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.PostIdentException;
 import de.marcoedenhofer.edenbank.persistence.entities.BusinessCustomer;
 import de.marcoedenhofer.edenbank.persistence.entities.CustomerAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.PrivateCustomer;
@@ -34,14 +36,35 @@ public class RegistrationController {
 
     @RequestMapping(value = "/create_account/private", method = RequestMethod.POST)
     public String registerPrivateCustomer(@ModelAttribute("privateCustomer") PrivateCustomer privateCustomer, RedirectAttributes redirectAttributes) {
-        CustomerAccount account = registrationService.createPrivateCustomerAccount(privateCustomer);
-        bankAccountService.createCheckingAccountForCustomerAccount(account);
+        CustomerAccount account;
+
+        try {
+            account = registrationService.createPrivateCustomerAccount(privateCustomer);
+            bankAccountService.createCheckingAccountForCustomerAccount(account);
+            String accountCreationMessage = "Ihr Konto wurde erfolgreich angelegt. Kundennummer: " + account.getCustomerAccountId();
+            redirectAttributes.addFlashAttribute("accountCreationMessage", accountCreationMessage);
+            try {
+                registrationService.callGiveawayService(account);
+            } catch (GiveawayException e) {
+                redirectAttributes.addFlashAttribute("giveawayServiceError", e.getMessage());
+            }
+        } catch (PostIdentException e) {
+            redirectAttributes.addFlashAttribute("postIdentError", e.getMessage());
+        }
+
         return "redirect:/login";
     }
 
     @RequestMapping(value = "/create_account/business", method = RequestMethod.POST)
     public String registerBusinessCustomer(@ModelAttribute("businessCustomer") BusinessCustomer businessCustomer, RedirectAttributes redirectAttributes) {
-        this.registrationService.createBusinessCustomerAccount(businessCustomer);
+        CustomerAccount account = registrationService.createBusinessCustomerAccount(businessCustomer);
+        String accountCreationMessage = "Ihr Konto wurde erfolgreich angelegt. Kundennummer: " + account.getCustomerAccountId();
+        redirectAttributes.addFlashAttribute("accountCreationMessage" ,accountCreationMessage);
+        try {
+            registrationService.callGiveawayService(account);
+        } catch (GiveawayException e) {
+            redirectAttributes.addFlashAttribute("giveawayServiceError", e.getMessage());
+        }
         return "redirect:/login";
     }
 }
