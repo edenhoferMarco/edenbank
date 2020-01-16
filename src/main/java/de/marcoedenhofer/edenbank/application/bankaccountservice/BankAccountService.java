@@ -4,6 +4,10 @@ import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAc
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
+import org.hibernate.annotations.Check;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,7 +116,7 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public BankAccount loadBankAccountWithIban(String iban) {
+    public BankAccount loadBankAccountWithIban(String iban) throws BankAccountNotFoundException {
         BankAccount bankAccount = bankAccountRepository.findBankAccountByIban(iban)
                 .orElseThrow( () -> {
                     throw new BankAccountNotFoundException("Bankaccount mit IBAN: " + iban + " existiert nicht");

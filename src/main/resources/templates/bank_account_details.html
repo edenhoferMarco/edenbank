@@ -135,24 +135,34 @@
                            aria-expanded="false" role="button" th:aria-controls="${'#collapseTransactionNr' + transaction.getTransactionId()}">
                             <div class="row">
                                 <div class="col-4">
-                                    <p>Sender</p>
+                                    <p>Sender:</p>
                                     <p th:text="${transaction.getSenderBankAccount().getIban()}"></p>
                                 </div>
                                 <div class="col-4">
-                                    <p>Empfänger</p>
+                                    <p>Empfänger:</p>
                                     <p th:text="${transaction.getReceiverBankAccount().getIban()}"></p>
                                 </div>
+
                                 <div class="col-4">
-                                    <p>Betrag</p>
+                                    <p>Betrag:</p>
                                     <p th:if="${transaction.getReceiverBankAccount().getIban() == bankAccount.getIban()}" th:text="'+ ' + ${ #numbers.formatCurrency( transaction.getAmount() / 100.0 ) }" class="text-success"></p>
                                     <p th:if="${transaction.getSenderBankAccount().getIban() == bankAccount.getIban()}" th:text="'- ' + ${ #numbers.formatCurrency( transaction.getAmount() / 100.0 ) }" class="text-danger"></p>
                                 </div>
                             </div>
                             <div class="row collapse" th:id="${'collapseTransactionNr' + transaction.getTransactionId()}">
                                 <div class="col-12">
-                                    <p>Betreff</p>
-                                    <p th:text="${transaction.usageDetails}"></p>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <p>Betreff</p>
+                                            <p th:text="${transaction.usageDetails}"></p>
+                                        </div>
+                                        <div class="col-4">
+                                            <p>Datum:</p>
+                                            <p th:text="${transaction.getTransactionDate()}"></p>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </a>
                     </div>

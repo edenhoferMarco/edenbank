@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Qualifier("security")
@@ -33,6 +34,7 @@ public class CustomerAccountService implements ICustomerAccountService {
     }
 
     @Override
+    @Transactional
     public CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer)
             throws PostIdentException {
         customer = customerRepository.save(customer);
@@ -51,6 +53,7 @@ public class CustomerAccountService implements ICustomerAccountService {
     }
 
     @Override
+    @Transactional
     public CustomerAccount createBusinessCustomerAccount(BusinessCustomer customer) {
         customer = customerRepository.save(customer);
 

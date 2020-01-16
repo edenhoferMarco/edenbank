@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}">
+    <!-- Bootstrap 4 css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<div class="content-container">
+    <div class="container mt-5">
+        <div class="row justify-content-center mb-5">
+            <div class="col-8">
+                <h4 class="text-center">Ein Fehler ist aufgetreten. Wir arbeiten daran!</h4>
+            </div>
+        </div>
+       <div class="row justify-content-center mb-5">
+           <div class="img-fluid">
+               <img th:src="@{/img/error.png}">
+           </div>
+       </div>
+        <div class="row justify-content-center">
+            <div class="col-6 text-center">
+                <a class="btn-link btn mt-4" th:href="@{~/overview}">Zurück zur Übersicht</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

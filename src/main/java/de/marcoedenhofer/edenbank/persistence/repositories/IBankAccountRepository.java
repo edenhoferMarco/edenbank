@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface IBankAccountRepository extends CrudRepository<BankAccount, Long> {
     Optional<BankAccount> findBankAccountByIban(String iban);
     Iterable<BankAccount> findAllByBankAccountIdNot(long bankAccountId);
+
 }

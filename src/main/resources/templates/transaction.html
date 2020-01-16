@@ -18,6 +18,18 @@
         <div class="container pt-2">
             <div class="row mt-5">
                 <div class="col-12 form-container m-5 justify-content-center">
+                    <!--/*@thymesVar id="transactionError" type="java.lang.String"*/-->
+                    <div th:if="${transactionError} != null" class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="alert alert-danger" role="alert" th:text="${transactionError}"></div>
+                        </div>
+                    </div>
+                    <!--/*@thymesVar id="transactionSuccess" type="java.lang.String"*/-->
+                    <div th:if="${transactionSuccess} != null" class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="alert alert-success" role="alert" th:text="${transactionSuccess}"></div>
+                        </div>
+                    </div>
                     <form th:action="@{/transaction/execute}" method="post" th:object="${transactionData}">
                         <div class="row">
                             <div class="col-12">

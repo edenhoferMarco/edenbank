@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -32,12 +33,11 @@ public class TransactionController {
         this.bankAccountService = bankAccountService;
     }
 
-    @RequestMapping(value = "/transactionapi/execute", method = RequestMethod.POST)
+    @RequestMapping(value = "apis/transaction/execute", method = RequestMethod.POST)
     @ResponseBody
     public TransactionData executeTransaction(@RequestBody TransactionData transactionData) throws BankTransactionException {
-        TransactionData response = transactionService.requestTransaction(transactionData);
 
-        return response;
+        return transactionService.requestTransaction(transactionData);
     }
 
     @RequestMapping(value = "/transaction", method = RequestMethod.GET)
@@ -53,13 +53,17 @@ public class TransactionController {
     }
 
     @RequestMapping(value = "/transaction/execute", method = RequestMethod.POST)
-    public String executeNewTransaction(@ModelAttribute TransactionData transactionData) {
+    public String executeNewTransaction(@ModelAttribute TransactionData transactionData,
+                                        RedirectAttributes redirectAttributes) {
         try {
             transactionService.requestInternalTransaction(transactionData);
+            String successMessage = "Auf Konto: " + transactionData.getReceiverIban() + " wurden "
+                    + transactionData.getAmount() +" € von Konto: " + transactionData.getSenderIban() + " überwiesen.";
+            redirectAttributes.addFlashAttribute("transactionSuccess", successMessage);
         } catch (BankTransactionException e) {
-            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("transactionError", e.getMessage());
         }
 
-        return "redirect:/overview";
+        return "redirect:/transaction";
     }
 }

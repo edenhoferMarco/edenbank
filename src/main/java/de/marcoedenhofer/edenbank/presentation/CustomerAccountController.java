@@ -16,15 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@Scope("session")
+@Scope("singleton")
 public class CustomerAccountController {
-    private final ICustomerAccountService registrationService;
     private final UserDetailsService userDetailsService;
 
-
-    public CustomerAccountController(ICustomerAccountService registrationService,
-                                     @Qualifier("security")UserDetailsService userDetailsService) {
-        this.registrationService = registrationService;
+    public CustomerAccountController(@Qualifier("security")UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 

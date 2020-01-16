@@ -90,6 +90,18 @@
         <div class="container pt-5">
             <div class="row justify-content-center">
                 <div class="col-12">
+                    <!--/*@thymesVar id="archiveError" type="java.lang.String"*/-->
+                    <div th:if="${archiveError} != null" class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="alert alert-danger" role="alert" th:text="${archiveError}"></div>
+                        </div>
+                    </div>
+                    <!--/*@thymesVar id="archiveSuccess" type="java.lang.String"*/-->
+                    <div th:if="${archiveSuccess} != null" class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="alert alert-success" role="alert" th:text="${archiveSuccess}"></div>
+                        </div>
+                    </div>
                     <div class="row mb-4">
                         <div class="col-8">
                             <h5>Girokonten</h5>

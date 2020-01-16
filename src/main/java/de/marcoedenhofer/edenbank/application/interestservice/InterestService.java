@@ -37,7 +37,7 @@ public class InterestService implements IInterestService {
             TransactionData transactionData = new TransactionData();
             transactionData.setSenderIban(edenbankAccount.getIban());
             transactionData.setReceiverIban(bankAccount.getIban());
-            transactionData.setUsageDetails("Zinsen");
+            transactionData.setUsageDetails("Zinsen auf Tagesgeld");
             double amount = computeInterestPayment(bankAccount.getBalance(), bankAccount.getInterestRate());
             transactionData.setAmount(amount);
 

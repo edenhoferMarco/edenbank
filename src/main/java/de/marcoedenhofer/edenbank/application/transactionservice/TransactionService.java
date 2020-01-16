@@ -1,5 +1,6 @@
 package de.marcoedenhofer.edenbank.application.transactionservice;
 
+import de.marcoedenhofer.edenbank.application.bankaccountservice.BankAccountNotFoundException;
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.BankAccount;
@@ -64,13 +65,13 @@ public class TransactionService implements ITransactionService {
             Transaction transaction = buildTransaction(transactionData,sender, receiver);
 
             executeTransaction(transaction);
-        } catch (UsernameNotFoundException ex) {
+        } catch (BankAccountNotFoundException ex) {
             throw new BankTransactionException(ex.getMessage());
         }
     }
 
     @Override
-    public List<Transaction> loadAllTransactionsWithParticipantBankAccount(BankAccount bankAccount) {
+    public List<Transaction> loadAllTransactionsWithParticipatingBankAccount(BankAccount bankAccount) {
         List<Transaction> participatedTransactions = new ArrayList<>();
         Iterable<Transaction> transactions = transactionRepository.
                 findAllBySenderBankAccountOrReceiverBankAccountOrderByTransactionDateDesc(bankAccount, bankAccount);
@@ -122,7 +123,8 @@ public class TransactionService implements ITransactionService {
     }
 
     private boolean canAuthenticate(long customerAccountId, String password) throws AuthenticationException {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(customerAccountId, password);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                customerAccountId, password);
 
         return authenticationManager.authenticate(authToken).isAuthenticated();
     }

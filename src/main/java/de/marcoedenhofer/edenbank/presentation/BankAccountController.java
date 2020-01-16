@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -33,19 +32,19 @@ public class BankAccountController {
     }
 
     @RequestMapping(value = "/bank_account/create/checking_account", method = RequestMethod.POST)
-    public String createCheckingAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount, RedirectAttributes redirectAttributes) {
+    public String createCheckingAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount) {
         bankAccountService.createCheckingAccountForCustomerAccount(customerAccount);
         return "redirect:/overview";
     }
 
     @RequestMapping(value = "/bank_account/create/savings_account", method = RequestMethod.POST)
-    public String createSavingsAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount, RedirectAttributes redirectAttributes) {
+    public String createSavingsAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount) {
         bankAccountService.createSavingsAccountForCustomerAccount(customerAccount);
         return "redirect:/overview";
     }
 
     @RequestMapping(value = "/bank_account/create/fixed_deposit_account", method = RequestMethod.POST)
-    public String createFixedDepositAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount, RedirectAttributes redirectAttributes) {
+    public String createFixedDepositAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount) {
         bankAccountService.createFixedDepositAccountForCustomerAccount(customerAccount);
         return "redirect:/overview";
     }
@@ -58,9 +57,10 @@ public class BankAccountController {
             BankAccount bankAccount = bankAccountService.loadBankAccountWithIban(transactionData
                     .getSenderIban());
             bankAccountService.archiveBankAccount(bankAccount);
+            String archiveMessage = "Konto: " + transactionData.getSenderIban() +" wurde stillgelegt";
+            redirectAttributes.addFlashAttribute("archiveError", archiveMessage);
         } catch (BankTransactionException e) {
-            // TODO
-            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("archiveError",e.getMessage());
         }
         return "redirect:/overview";
     }
@@ -77,7 +77,7 @@ public class BankAccountController {
         if (customerAccountService.customerAccountOwnsBankAccountWithId(customerAccount,bankAccountId)) {
             List<BankAccount> activeBankAccounts =
                     bankAccountService.getAllActiveBankAccountsFromCustomerAccountExceptId(customerAccount,bankAccountId);
-            List<Transaction> transactions = transactionService.loadAllTransactionsWithParticipantBankAccount(bankAccount);
+            List<Transaction> transactions = transactionService.loadAllTransactionsWithParticipatingBankAccount(bankAccount);
 
             Boolean isBusinessCustomer = customerDetails instanceof BusinessCustomer;
             if (isBusinessCustomer) {
