@@ -2,7 +2,7 @@
 Projektarbeit von Marco Edenhofer für die Vorlesung Software Entwicklung an der OTH Regensburg im 
 Wintersemester 19/20. 
 
-###1. Generelle Informationen
+### 1. Generelle Informationen
 
 Die "edenbank" ist ein Zahlungsdienstleister bei dem es möglich ist über eine REST 
 Schnittstelle Transaktionen zu tätigen. Jeder Neukunde bekommt ein Werbegeschenk 
@@ -14,8 +14,8 @@ Zinsen gibt.
 
 Viel Spaß bei der Verwendung unseres Services!
 
-###2 Usecases
-####2.1 Kundenkonto anlegen
+### 2 Usecases
+#### 2.1 Kundenkonto anlegen
 Um ein Privatkonto anlegen zu können, muss der Kunde per Post-Ident 
 identifizierbar sein. Aus diesem Grund sind folgende Nutzer zum Anlegen bereits
 bei dem Partner zur Identifizierung vermerkt:
@@ -36,43 +36,43 @@ angelegt werden.
 
 Durch einen weiteren Partnerservice bekommt der Neukunde ein Werbegeschenk.
 
-#####Achtung: Das Passwort ist der Vorname des Kunden!
+##### Achtung: Das Passwort ist der Vorname des Kunden!
 
 Diese Entscheidung wurde getroffen, da Onlinebanken dem Kunden das Passwort
 häufig per Post oder E-Mail mitteilen (Quelle: S-Broker). Das Verschicken einer Email würde
 hier die Angabe einer gültigen Email Adresse voraussetzen, was der Einfachheit zum
 Testen halber hier nicht implementiert wurde.
 
-####2.2 Bankkonto hinzufügen
+#### 2.2 Bankkonto hinzufügen
 Es kann jederzeit ein neues Girokonto, Tagesgeldkonto oder Festgeldkonto 
 hinzugefügt werden. Nichts besonderes ist zu beachten.
 
-####2.3 Bankkonto löschen
+#### 2.3 Bankkonto löschen
 Jeder Kunde benötigt mindestens ein Konto. Ist das der Fall, kann ein bestehendes
 Konto gelöscht werden, indem ein Verrechnungskonto für das übrige Geld gewählt wird.
 Festgeldkonten können erst nach ablauf der Sperrfrist gelöscht werden (in diesem 
 Projekt wird zur besseren Testbarkeit davon ausgegangen, dass ein 
 Festgeldvertrag 10 Minuten dauert)
 
-####2.4 Transaktionen
-#####2.4.1 In der Anwedung
+#### 2.4 Transaktionen
+##### 2.4.1 In der Anwedung
 
 Ein jeder Kunde kann von einem seiner bestehenden Konten auf ein beliebiges anderes
 Konto (über IBAN anzugeben) bei der edenbank Echtzeitüberweisungen durchführen.
 
-#####2.4.2 Per REST-Schnittstelle
+##### 2.4.2 Per REST-Schnittstelle
 
 Über einen POST Request auf `/api/transaction/execute` kann durch Übergabe eines
 DTOs mit IBAN von Sender und Empfänger, Verwendungszweck, Betrag, Kundenkontonummer
 und Passwort die REST-Schnittstelle für Transaktionen verwendet werden.
 
-#####2.5 Kontodetails einsehen
+##### 2.5 Kontodetails einsehen
 Jeder Kunde kann Details zu seinen Konten anzeigen, inklusive aller beteiligter
 Transaktionen.
 
-###3. Besonderheiten
+### 3. Besonderheiten
 
-####3.1 Zinsen
+#### 3.1 Zinsen
 Sowohl auf Tagesgeld- als auch auf Festgeldkonten gibt es Zinsen. Diese werden 
 MINÜTLICH verrechnet um das Testen der Funktion zu erleichtern. 
 
