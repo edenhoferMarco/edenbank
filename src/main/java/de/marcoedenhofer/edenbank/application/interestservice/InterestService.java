@@ -7,6 +7,8 @@ import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData
 import de.marcoedenhofer.edenbank.persistence.entities.BankAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.FixedDepositAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.SavingsAccount;
+import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,13 @@ public class InterestService implements IInterestService {
 
     private final ITransactionService transactionService;
     private final IBankAccountService bankAccountService;
+    private final IBankAccountRepository bankAccountRepository;
 
     public InterestService(ITransactionService transactionService,
-                           IBankAccountService bankAccountService) {
+                           IBankAccountService bankAccountService, IBankAccountRepository bankAccountRepository) {
         this.transactionService = transactionService;
         this.bankAccountService = bankAccountService;
+        this.bankAccountRepository = bankAccountRepository;
     }
 
     // every minute
@@ -40,8 +44,9 @@ public class InterestService implements IInterestService {
         bankAccountService.loadAllActiveFixedDepositAccounts().forEach(account -> {
             if (!account.isDone()) {
                 bookInterest(account);
-                if (Calendar.getInstance().after(account.getEndDate())) {
+                if (account.getEndDate().before(Calendar.getInstance().getTime())) {
                     account.setDone(true);
+                    bankAccountRepository.save(account);
                 }
             }
         });

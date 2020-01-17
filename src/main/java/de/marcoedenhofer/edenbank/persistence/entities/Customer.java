@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Customer {
+public class Customer extends AbstractEntity<String> {
     @Id
     @NonNull
     private String email;
@@ -16,12 +16,9 @@ public class Customer {
     public Customer() {
     }
 
-    public PersonalData getPersonalData() {
-        return personalData;
-    }
-
-    public void setPersonalData(PersonalData personalData) {
-        this.personalData = personalData;
+    @Override
+    public String getId() {
+        return email;
     }
 
     public String getEmail() {
@@ -30,6 +27,15 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+        super.setId(email);
+    }
+
+    public PersonalData getPersonalData() {
+        return personalData;
+    }
+
+    public void setPersonalData(PersonalData personalData) {
+        this.personalData = personalData;
     }
 
     public boolean isIdentified() {

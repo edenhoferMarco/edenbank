@@ -10,21 +10,23 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class CustomerAccount implements UserDetails {
+public class CustomerAccount extends AbstractEntity<Long> implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long customerAccountId;
     private String password;
     private double managementFee;
     private boolean isArchived = false;
-    private TanList tanList;
-    @OneToMany
-    private List<Loan> loans = new ArrayList<>();
     @OneToMany
     private List<BankAccount> bankAccounts = new ArrayList<>();
     @OneToOne
     @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
     private Customer customerDetails;
+
+    @Override
+    public Long getId() {
+        return customerAccountId;
+    }
 
     public long getCustomerAccountId() {
         return customerAccountId;
@@ -32,6 +34,7 @@ public class CustomerAccount implements UserDetails {
 
     public void setCustomerAccountId(long customerAccountId) {
         this.customerAccountId = customerAccountId;
+        super.setId(customerAccountId);
     }
 
     @Override
@@ -86,22 +89,6 @@ public class CustomerAccount implements UserDetails {
 
     public void setArchived(boolean archived) {
         isArchived = archived;
-    }
-
-    public TanList getTanList() {
-        return tanList;
-    }
-
-    public void setTanList(TanList tanList) {
-        this.tanList = tanList;
-    }
-
-    public List<Loan> getLoans() {
-        return loans;
-    }
-
-    public void setLoans(List<Loan> loans) {
-        this.loans = loans;
     }
 
     public List<BankAccount> getBankAccounts() {

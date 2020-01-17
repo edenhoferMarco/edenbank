@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class BankAccount {
+public class BankAccount extends AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long bankAccountId;
@@ -15,12 +15,18 @@ public class BankAccount {
     private boolean isArchived = false;
     private int overdraftLimit = 0;
 
+    @Override
+    public Long getId() {
+        return bankAccountId;
+    }
+
     public long getBankAccountId() {
         return bankAccountId;
     }
 
     public void setBankAccountId(long bankAccountId) {
         this.bankAccountId = bankAccountId;
+        super.setId(bankAccountId);
     }
 
     public int getBankCode() {

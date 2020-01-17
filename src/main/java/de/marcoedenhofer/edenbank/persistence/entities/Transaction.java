@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-public class Transaction {
+public class Transaction extends AbstractEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long transactionId;
@@ -18,12 +18,18 @@ public class Transaction {
     private BankAccount receiverBankAccount;
     private boolean transactionDone = false;
 
+    @Override
+    public Long getId() {
+        return transactionId;
+    }
+
     public long getTransactionId() {
         return transactionId;
     }
 
     public void setTransactionId(long transactionId) {
         this.transactionId = transactionId;
+        super.setId(transactionId);
     }
 
     public int getAmount() {
