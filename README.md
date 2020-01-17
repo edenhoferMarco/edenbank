@@ -23,7 +23,7 @@ bei dem Partner zur Identifizierung vermerkt:
 - Herr Manuel Mehrfachvererbung
   - Geboren: 01.12.1964 in Regensburg, Deutschland
   - Wohnort: Galgenbergstraße 32, 93053 Regensburg
-  - Email: mehrfachvererbung-ist-böse@gmail.de
+  - Email: mehrfachvererbung-ist-boese@gmail.de
 
 - Frau Paula Polymorphie
   - Geboren: 24.07.1988 in Regensburg, Deutschland
