@@ -5,13 +5,17 @@ import de.marcoedenhofer.edenbank.application.transactionservice.BankTransaction
 import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
 import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.BankAccount;
-import de.marcoedenhofer.edenbank.persistence.entities.CheckingAccount;
+import de.marcoedenhofer.edenbank.persistence.entities.FixedDepositAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.SavingsAccount;
+import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
+
 @Service
+@Scope("singleton")
 public class InterestService implements IInterestService {
 
     private final ITransactionService transactionService;
@@ -25,20 +29,48 @@ public class InterestService implements IInterestService {
 
     // every minute
     @Scheduled(cron = "0 */1 * * * *")
-    private void bookInterests() {
-        bankAccountService.getAllActiveSavingsAccounts()
+    private void bookInterestForSavingAccounts() {
+        bankAccountService.loadAllActiveSavingsAccounts()
                 .forEach(this::bookInterest);
     }
 
+    // every minute
+    @Scheduled(cron = "0 */1 * * * *")
+    private void bookInterestForFixedDepositAccounts() {
+        bankAccountService.loadAllActiveFixedDepositAccounts().forEach(account -> {
+            if (!account.isDone()) {
+                bookInterest(account);
+                if (Calendar.getInstance().after(account.getEndDate())) {
+                    account.setDone(true);
+                }
+            }
+        });
+    }
+
     @Transactional
-    protected void bookInterest(SavingsAccount bankAccount) {
+    protected void bookInterest(BankAccount bankAccount) {
+        final long EDENBANK_ACCOUNT_ID = 2;
+
+        if (!(bankAccount instanceof SavingsAccount || bankAccount instanceof FixedDepositAccount)) {
+            return;
+        }
+
         if (bankAccount.getBalance() > 0) {
-            BankAccount edenbankAccount = bankAccountService.loadBankAccountWithId(2);
+            BankAccount edenbankAccount = bankAccountService.loadBankAccountWithId(EDENBANK_ACCOUNT_ID);
             TransactionData transactionData = new TransactionData();
             transactionData.setSenderIban(edenbankAccount.getIban());
             transactionData.setReceiverIban(bankAccount.getIban());
-            transactionData.setUsageDetails("Zinsen auf Tagesgeld");
-            double amount = computeInterestPayment(bankAccount.getBalance(), bankAccount.getInterestRate());
+
+            double amount;
+            if (bankAccount instanceof SavingsAccount) {
+                transactionData.setUsageDetails("Zinsen auf Tagesgeld");
+                amount = computeInterestPayment(bankAccount.getBalance(),
+                        ((SavingsAccount) bankAccount).getInterestRate());
+            } else {
+                transactionData.setUsageDetails("Zinsen auf Festgeld");
+                amount = computeInterestPayment(bankAccount.getBalance(),
+                        ((FixedDepositAccount) bankAccount).getInterestRate());
+            }
             transactionData.setAmount(amount);
 
             try {

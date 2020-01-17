@@ -12,8 +12,9 @@ public interface IBankAccountService {
     BankAccount loadBankAccountWithId(long bankAccountId) throws BankAccountNotFoundException;
     BankAccount loadBankAccountWithIban(String iban) throws BankAccountNotFoundException;
     void archiveBankAccount(BankAccount bankAccount);
-    List<BankAccount> getAllActiveBankAccountsFromCustomerAccount(CustomerAccount customerAccount);
-    List<BankAccount> getAllActiveBankAccountsFromCustomerAccountExceptId(CustomerAccount customerAccount,
-                                                                          long exceptionAccountId);
-    List<SavingsAccount> getAllActiveSavingsAccounts();
+    List<BankAccount> loadAllActiveBankAccountsFromCustomerAccount(CustomerAccount customerAccount);
+    List<BankAccount> loadAllActiveBankAccountsFromCustomerAccountExceptId(CustomerAccount customerAccount,
+                                                                           long exceptionAccountId);
+    List<SavingsAccount> loadAllActiveSavingsAccounts();
+    List<FixedDepositAccount> loadAllActiveFixedDepositAccounts();
 }

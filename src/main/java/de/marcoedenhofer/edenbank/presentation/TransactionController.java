@@ -8,8 +8,6 @@ import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData
 
 import de.marcoedenhofer.edenbank.persistence.entities.BankAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.CustomerAccount;
-import de.marcoedenhofer.edenbank.persistence.entities.Transaction;
-import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -44,7 +42,7 @@ public class TransactionController {
     public String createNewTransaction(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerAccount customerAccount = customerAccountService.loadCustomerAccountWithId(auth.getName());
-        List<BankAccount> activeBankAccounts = bankAccountService.getAllActiveBankAccountsFromCustomerAccount(customerAccount);
+        List<BankAccount> activeBankAccounts = bankAccountService.loadAllActiveBankAccountsFromCustomerAccount(customerAccount);
 
         model.addAttribute("bankAccounts", activeBankAccounts);
         model.addAttribute("transactionData", new TransactionData());

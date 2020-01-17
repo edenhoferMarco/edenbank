@@ -1,14 +1,13 @@
 package de.marcoedenhofer.edenbank.persistence.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import java.util.Date;
 
 @Entity
 public class FixedDepositAccount extends BankAccount {
     private float interestRate;
     private Date endDate;
+    private boolean isDone = false;
 
     public float getInterestRate() {
         return interestRate;
@@ -24,5 +23,13 @@ public class FixedDepositAccount extends BankAccount {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 }

@@ -6,6 +6,7 @@ import de.marcoedenhofer.edenbank.application.transactionservice.BankTransaction
 import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
 import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,19 +34,34 @@ public class BankAccountController {
 
     @RequestMapping(value = "/bank_account/create/checking_account", method = RequestMethod.POST)
     public String createCheckingAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount) {
-        bankAccountService.createCheckingAccountForCustomerAccount(customerAccount);
+        try {
+            bankAccountService.createCheckingAccountForCustomerAccount(customerAccount);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         return "redirect:/overview";
     }
 
     @RequestMapping(value = "/bank_account/create/savings_account", method = RequestMethod.POST)
     public String createSavingsAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount) {
-        bankAccountService.createSavingsAccountForCustomerAccount(customerAccount);
+        try {
+            bankAccountService.createSavingsAccountForCustomerAccount(customerAccount);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         return "redirect:/overview";
     }
 
     @RequestMapping(value = "/bank_account/create/fixed_deposit_account", method = RequestMethod.POST)
     public String createFixedDepositAccount(@ModelAttribute("customerAccount") CustomerAccount customerAccount) {
-        bankAccountService.createFixedDepositAccountForCustomerAccount(customerAccount);
+        try {
+            bankAccountService.createFixedDepositAccountForCustomerAccount(customerAccount);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         return "redirect:/overview";
     }
 
@@ -58,7 +74,7 @@ public class BankAccountController {
                     .getSenderIban());
             bankAccountService.archiveBankAccount(bankAccount);
             String archiveMessage = "Konto: " + transactionData.getSenderIban() +" wurde stillgelegt";
-            redirectAttributes.addFlashAttribute("archiveError", archiveMessage);
+            redirectAttributes.addFlashAttribute("archiveSuccess", archiveMessage);
         } catch (BankTransactionException e) {
             redirectAttributes.addFlashAttribute("archiveError",e.getMessage());
         }
@@ -76,7 +92,7 @@ public class BankAccountController {
 
         if (customerAccountService.customerAccountOwnsBankAccountWithId(customerAccount,bankAccountId)) {
             List<BankAccount> activeBankAccounts =
-                    bankAccountService.getAllActiveBankAccountsFromCustomerAccountExceptId(customerAccount,bankAccountId);
+                    bankAccountService.loadAllActiveBankAccountsFromCustomerAccountExceptId(customerAccount,bankAccountId);
             List<Transaction> transactions = transactionService.loadAllTransactionsWithParticipatingBankAccount(bankAccount);
 
             Boolean isBusinessCustomer = customerDetails instanceof BusinessCustomer;

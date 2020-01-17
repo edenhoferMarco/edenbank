@@ -1,12 +1,11 @@
 package de.marcoedenhofer.edenbank.application.customeraccountservice;
 
-import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Qualifier("security")
+@Scope("singleton")
 public class CustomerAccountService implements ICustomerAccountService {
     private final long EDENBANK_ACCOUNT_ID = 1;
     private final double PRIVATE_MANAGEMENT_FEE = 0.0;
@@ -89,12 +89,10 @@ public class CustomerAccountService implements ICustomerAccountService {
 
     @Override
     public UserDetails loadUserByUsername(String customerAccountId) throws UsernameNotFoundException {
-        CustomerAccount account = customerAccountRepository.findById(Long.parseLong(customerAccountId))
+        return customerAccountRepository.findById(Long.parseLong(customerAccountId))
                 .orElseThrow( () -> {
                     throw new UsernameNotFoundException("Kundenaccount mit Nummer: " + customerAccountId + " existiert nicht");
                 });
-
-        return account;
     }
 
 

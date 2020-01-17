@@ -1,6 +1,5 @@
 package de.marcoedenhofer.edenbank.presentation;
 
-import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;

@@ -2,11 +2,12 @@ package de.marcoedenhofer.edenbank.application.transactionservice;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.BankAccountNotFoundException;
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
-import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.BankAccount;
+import de.marcoedenhofer.edenbank.persistence.entities.FixedDepositAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.Transaction;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ITransactionRepository;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -14,9 +15,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Service
+@Scope("singleton")
 public class TransactionService implements ITransactionService {
     private final ITransactionRepository transactionRepository;
     private final IBankAccountRepository bankAccountRepository;
@@ -61,6 +65,10 @@ public class TransactionService implements ITransactionService {
     public void requestInternalTransaction(TransactionData transactionData) throws BankTransactionException {
         try {
             BankAccount sender = bankAccountService.loadBankAccountWithIban(transactionData.getSenderIban());
+            if (sender instanceof FixedDepositAccount && !(((FixedDepositAccount) sender).isDone())) {
+                throw new BankTransactionException("Festgeldkonto: " + sender.getIban()
+                        + " ist noch gesperrt. Stillegung nicht möglich");
+            }
             BankAccount receiver = bankAccountService.loadBankAccountWithIban(transactionData.getReceiverIban());
             Transaction transaction = buildTransaction(transactionData,sender, receiver);
 

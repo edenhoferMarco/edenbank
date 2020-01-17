@@ -1,7 +1,6 @@
 package de.marcoedenhofer.edenbank.config;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
-import de.marcoedenhofer.edenbank.application.customeraccountservice.GiveawayException;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.PostIdentException;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 @Component
 public class DataLoader implements ApplicationRunner {
