@@ -37,8 +37,6 @@ public class CustomerAccountService implements ICustomerAccountService {
     @Transactional
     public CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer)
             throws PostIdentException {
-        customer = customerRepository.save(customer);
-
         if (!customerIsIdentifiedViaPostIdent(customer)) {
             throw new PostIdentException(customer.getPersonalData().getFormOfAddress() + " "
                     + customer.getPersonalData().getFirstname() + " "
@@ -95,7 +93,6 @@ public class CustomerAccountService implements ICustomerAccountService {
                 });
     }
 
-
     @Override
     public boolean customerAccountOwnsBankAccountWithId(CustomerAccount customerAccount, long bankAccountId) {
         for (BankAccount bankAccount : customerAccount.getBankAccounts()) {
@@ -119,23 +116,6 @@ public class CustomerAccountService implements ICustomerAccountService {
         return account;
     }
 
-    /*
-    private void checkForNewIdentifiedCustomers() {
-        customerRepository.findAllByIdentifiedTrue()
-                .forEach(customer -> {
-                    if (customerIsIdentifiedViaPostIdent(customer)) {
-                        customer.setIdentified(true);
-                        customer = customerRepository.save(customer);
-                        CustomerAccount customerAccount = buildCustomerAccount(PRIVATE_MANAGEMENT_FEE, customer);
-                        customerAccountRepository.save(customerAccount);
-
-                        // If a customer is identified, he will receive an email with his credential.
-                        // This functionality, however, is out of scope for this project.
-                        // sendEmailNotification(customer.getEmail());
-                    }
-                });
-    } */
-
     private boolean customerIsIdentifiedViaPostIdent(Customer customer) {
         // TODO: call elyes for postident
 
@@ -155,6 +135,6 @@ public class CustomerAccountService implements ICustomerAccountService {
                         });
             }
         });
-
     }
+
 }

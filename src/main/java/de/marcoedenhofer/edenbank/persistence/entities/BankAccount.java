@@ -11,7 +11,7 @@ public class BankAccount extends AbstractEntity<Long> {
     private int bankCode;
     private String iban;
     private String bic;
-    private int balance;
+    private long balance;
     private boolean isArchived = false;
     private int overdraftLimit = 0;
 
@@ -53,11 +53,11 @@ public class BankAccount extends AbstractEntity<Long> {
         this.bic = bic;
     }
 
-    public int getBalance() {
+    public long getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(long balance) {
         this.balance = balance;
     }
 

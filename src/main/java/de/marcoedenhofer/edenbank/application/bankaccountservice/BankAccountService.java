@@ -4,25 +4,23 @@ import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAc
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.IBankAccountRepository;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
 @Scope("singleton")
 public class BankAccountService implements IBankAccountService {
+    // constants for every edenbank account
     private final String COUNTRY_CODE = "DE";
     private final int BANK_CODE = 75030011;
     private final String BIC = "BYEBDEM1RBG";
-
 
     // constants for CheckingAccount
     private final int OVERDRAFT_LIMIT = 1000;
@@ -37,8 +35,6 @@ public class BankAccountService implements IBankAccountService {
     private final float FIXED_DEPOSIT_INTEREST_RATE = 2f;
     private final int FIXED_DEPOSIT_DURATION_MINUTES = 10;
 
-
-
     private final IBankAccountRepository bankAccountRepository;
     private final ICustomerAccountRepository customerAccountRepository;
     private final ICustomerAccountService customerAccountService;
@@ -50,7 +46,6 @@ public class BankAccountService implements IBankAccountService {
         this.customerAccountRepository = customerAccountRepository;
         this.customerAccountService = registrationService;
     }
-
 
     @Override
     public void createCheckingAccountForCustomerAccount(CustomerAccount passedAccount) throws UsernameNotFoundException {
@@ -80,7 +75,7 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    public void createCheckingAccountWithFixedBudged(CustomerAccount passedAccount, int budget) throws UsernameNotFoundException {
+    public void createCheckingAccountWithFixedBudged(CustomerAccount passedAccount, long budget) throws UsernameNotFoundException {
         CustomerAccount customerAccount = customerAccountService.loadCustomerAccountWithId(
                 passedAccount.getCustomerAccountId());
         CheckingAccount checkingAccount = createCheckingAccount();
@@ -112,7 +107,7 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public void archiveBankAccount(BankAccount bankAccount) {
         try {
             bankAccount = loadBankAccountWithId(bankAccount.getBankAccountId());
@@ -172,10 +167,6 @@ public class BankAccountService implements IBankAccountService {
         return fixedDepostiAccounts;
     }
 
-
-
-
-
     private CheckingAccount createCheckingAccount() {
         CheckingAccount account = new CheckingAccount();
         initializeWithConstantValues(account);
@@ -231,6 +222,5 @@ public class BankAccountService implements IBankAccountService {
 
         return account;
     }
-
 
 }

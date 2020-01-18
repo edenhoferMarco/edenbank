@@ -17,13 +17,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RegistrationController {
-    private final ICustomerAccountService registrationService;
+    private final ICustomerAccountService customerAccountService;
     private final IBankAccountService bankAccountService;
 
     @Autowired
     public RegistrationController(ICustomerAccountService registrationService,
                                   IBankAccountService bankAccountService) {
-        this.registrationService = registrationService;
+        this.customerAccountService = registrationService;
         this.bankAccountService = bankAccountService;
     }
 
@@ -39,12 +39,12 @@ public class RegistrationController {
         CustomerAccount account;
 
         try {
-            account = registrationService.createPrivateCustomerAccount(privateCustomer);
-            bankAccountService.createCheckingAccountForCustomerAccount(account);
+            account = customerAccountService.createPrivateCustomerAccount(privateCustomer);
+            bankAccountService.createCheckingAccountWithFixedBudged(account,100000);
             String accountCreationMessage = "Ihr Konto wurde erfolgreich angelegt. Kundennummer: " + account.getCustomerAccountId();
             redirectAttributes.addFlashAttribute("accountCreationMessage", accountCreationMessage);
             try {
-                registrationService.callGiveawayService(account);
+                customerAccountService.callGiveawayService(account);
             } catch (GiveawayException e) {
                 redirectAttributes.addFlashAttribute("giveawayServiceError", e.getMessage());
             }
@@ -57,11 +57,12 @@ public class RegistrationController {
 
     @RequestMapping(value = "/create_account/business", method = RequestMethod.POST)
     public String registerBusinessCustomer(@ModelAttribute("businessCustomer") BusinessCustomer businessCustomer, RedirectAttributes redirectAttributes) {
-        CustomerAccount account = registrationService.createBusinessCustomerAccount(businessCustomer);
+        CustomerAccount account = customerAccountService.createBusinessCustomerAccount(businessCustomer);
+        bankAccountService.createCheckingAccountWithFixedBudged(account,100000);
         String accountCreationMessage = "Ihr Konto wurde erfolgreich angelegt. Kundennummer: " + account.getCustomerAccountId();
         redirectAttributes.addFlashAttribute("accountCreationMessage" ,accountCreationMessage);
         try {
-            registrationService.callGiveawayService(account);
+            customerAccountService.callGiveawayService(account);
         } catch (GiveawayException e) {
             redirectAttributes.addFlashAttribute("giveawayServiceError", e.getMessage());
         }

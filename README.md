@@ -43,6 +43,13 @@ häufig per Post oder E-Mail mitteilen (Quelle: S-Broker). Das Verschicken einer
 hier die Angabe einer gültigen Email Adresse voraussetzen, was der Einfachheit zum
 Testen halber hier nicht implementiert wurde.
 
+##### Jeder Neukunde startet mit 1000€ Guthaben
+ 
+Grund hierfür ist erneut die Vereinfachung des Testprozesses.
+Normalerweise würde man sein Geld per Einzahlung oder Überweisung von einem anderen,
+bereits bestehendem, Bankkonto aufladen. Das ist im Ramen dieser Projektarbeit aber 
+nicht möglich.
+
 #### 2.2 Bankkonto hinzufügen
 Es kann jederzeit ein neues Girokonto, Tagesgeldkonto oder Festgeldkonto 
 hinzugefügt werden. Nichts besonderes ist zu beachten.

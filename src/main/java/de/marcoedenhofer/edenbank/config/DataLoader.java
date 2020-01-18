@@ -104,6 +104,78 @@ public class DataLoader implements ApplicationRunner {
         customer.setCompanyAddress(businessAddress);
 
         CustomerAccount customerAccount = registrationService.createBusinessCustomerAccount(customer);
-        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,2000000000);
+        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,20000000000L);
+    }
+
+    private void createBigBazarAccount() throws ParseException {
+        BusinessCustomer customer = new BusinessCustomer();
+        PersonalData personalData = new PersonalData();
+        Address personalAddress = new Address();
+        Address businessAddress = new Address();
+
+        personalAddress.setCountry("Deutschland");
+        personalAddress.setCity("Regensburg");
+        personalAddress.setPostalNumber(93053);
+        personalAddress.setStreetName("Bazarstraße");
+        personalAddress.setHouseNumber("3");
+
+        personalData.setFormOfAddress("Herr");
+        personalData.setFirstname("Fatih");
+        personalData.setLastname("Arslan");
+        personalData.setBirthCountry("Deutschland");
+        personalData.setBirthPlace("Regensburg");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        personalData.setBirthdate(format.parse("03.04.1994"));
+        personalData.setPersonalAddress(personalAddress);
+
+        businessAddress.setCountry("Deutschland");
+        businessAddress.setCity("Schwandorf");
+        businessAddress.setPostalNumber(93053);
+        businessAddress.setStreetName("Bankstrasse");
+        businessAddress.setHouseNumber("10");
+
+        customer.setEmail("fatiharslan@big-bazar.de");
+        customer.setPersonalData(personalData);
+        customer.setCompanyName("BigBazar GmbH");
+        customer.setCompanyAddress(businessAddress);
+
+        CustomerAccount customerAccount = registrationService.createBusinessCustomerAccount(customer);
+        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,100000000);
+    }
+
+    private void createLieferdienstAccount() throws ParseException {
+        BusinessCustomer customer = new BusinessCustomer();
+        PersonalData personalData = new PersonalData();
+        Address personalAddress = new Address();
+        Address businessAddress = new Address();
+
+        personalAddress.setCountry("Deutschland");
+        personalAddress.setCity("Regensburg");
+        personalAddress.setPostalNumber(93053);
+        personalAddress.setStreetName("Bankstraße");
+        personalAddress.setHouseNumber("12");
+
+        personalData.setFormOfAddress("Herr");
+        personalData.setFirstname("Elyes");
+        personalData.setLastname("Nasri");
+        personalData.setBirthCountry("Deutschland");
+        personalData.setBirthPlace("Regensburg");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        personalData.setBirthdate(format.parse("03.04.1994"));
+        personalData.setPersonalAddress(personalAddress);
+
+        businessAddress.setCountry("Deutschland");
+        businessAddress.setCity("Regensburg");
+        businessAddress.setPostalNumber(93053);
+        businessAddress.setStreetName("Bankstrasse");
+        businessAddress.setHouseNumber("10");
+
+        customer.setEmail("elyesnasri@lieferdienst.de");
+        customer.setPersonalData(personalData);
+        customer.setCompanyName("Lieferdienst GmbH");
+        customer.setCompanyAddress(businessAddress);
+
+        CustomerAccount customerAccount = registrationService.createBusinessCustomerAccount(customer);
+        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,100000000);
     }
 }
