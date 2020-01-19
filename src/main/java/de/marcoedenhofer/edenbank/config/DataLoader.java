@@ -33,14 +33,17 @@ public class DataLoader implements ApplicationRunner {
         long count = customerAccountRepository.count();
 
         // only create data once, if no entry is in database.
-        if (count < 2) {
+        if (count < 5) {
             createEdenbankAccount();
-            createDummyCustomerAccount();
+            createLieferdienstAccount();
+            createBigBazarAccount();
+            createDummyCustomerAccount1();
+            createDummyCustomerAccount2();
         }
 
     }
 
-    protected void createDummyCustomerAccount() throws ParseException {
+    protected void createDummyCustomerAccount1() throws ParseException {
         PrivateCustomer customer = new PrivateCustomer();
         PersonalData personalData = new PersonalData();
         Address address = new Address();
@@ -67,7 +70,38 @@ public class DataLoader implements ApplicationRunner {
         } catch (PostIdentException e) {
             e.printStackTrace();
         }
-        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,100000);
+        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,1000000);
+
+    }
+
+    protected void createDummyCustomerAccount2() throws ParseException {
+        PrivateCustomer customer = new PrivateCustomer();
+        PersonalData personalData = new PersonalData();
+        Address address = new Address();
+        address.setCountry("Deutschland");
+        address.setCity("Regensburg");
+        address.setPostalNumber(93049);
+        address.setStreetName("Prüfeningerstraße");
+        address.setHouseNumber("17");
+        personalData.setFirstname("Theodor");
+        personalData.setLastname("Terstperson");
+        personalData.setBirthCountry("Deutschland");
+        personalData.setBirthPlace("Regensburg");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        personalData.setBirthdate(format.parse("02.02.1986"));
+        personalData.setFormOfAddress("Herr");
+        personalData.setPersonalAddress(address);
+        customer.setEmail("theodortestperson@testmail.de");
+        customer.setPersonalData(personalData);
+
+
+        CustomerAccount customerAccount = null;
+        try {
+            customerAccount = registrationService.createPrivateCustomerAccount(customer);
+        } catch (PostIdentException e) {
+            e.printStackTrace();
+        }
+        bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,1000000);
 
     }
 
@@ -125,14 +159,14 @@ public class DataLoader implements ApplicationRunner {
         personalData.setBirthCountry("Deutschland");
         personalData.setBirthPlace("Regensburg");
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        personalData.setBirthdate(format.parse("03.04.1994"));
+        personalData.setBirthdate(format.parse("20.02.1997"));
         personalData.setPersonalAddress(personalAddress);
 
         businessAddress.setCountry("Deutschland");
         businessAddress.setCity("Schwandorf");
-        businessAddress.setPostalNumber(93053);
-        businessAddress.setStreetName("Bankstrasse");
-        businessAddress.setHouseNumber("10");
+        businessAddress.setPostalNumber(92421);
+        businessAddress.setStreetName("In der Hood");
+        businessAddress.setHouseNumber("90");
 
         customer.setEmail("fatiharslan@big-bazar.de");
         customer.setPersonalData(personalData);
@@ -152,8 +186,8 @@ public class DataLoader implements ApplicationRunner {
         personalAddress.setCountry("Deutschland");
         personalAddress.setCity("Regensburg");
         personalAddress.setPostalNumber(93053);
-        personalAddress.setStreetName("Bankstraße");
-        personalAddress.setHouseNumber("12");
+        personalAddress.setStreetName("Lieferdienststraße");
+        personalAddress.setHouseNumber("31");
 
         personalData.setFormOfAddress("Herr");
         personalData.setFirstname("Elyes");
@@ -161,14 +195,14 @@ public class DataLoader implements ApplicationRunner {
         personalData.setBirthCountry("Deutschland");
         personalData.setBirthPlace("Regensburg");
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        personalData.setBirthdate(format.parse("03.04.1994"));
+        personalData.setBirthdate(format.parse("29.12.1990"));
         personalData.setPersonalAddress(personalAddress);
 
         businessAddress.setCountry("Deutschland");
         businessAddress.setCity("Regensburg");
         businessAddress.setPostalNumber(93053);
-        businessAddress.setStreetName("Bankstrasse");
-        businessAddress.setHouseNumber("10");
+        businessAddress.setStreetName("Lieferdienststraße");
+        businessAddress.setHouseNumber("32");
 
         customer.setEmail("elyesnasri@lieferdienst.de");
         customer.setPersonalData(personalData);
