@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     private static final String[] ALLOW_ACCESS_WITHOUT_AUTHENTICATION = {
             "/css/**", "/img/**", "/fonts/**", "/js/**","/h2-console/**", "/", "/login", "/create_account/**",
-            "/transactionapi/**"
+            "/apis/**"
     };
 
     @Override
@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(ALLOW_ACCESS_WITHOUT_AUTHENTICATION)
                 .permitAll().anyRequest().authenticated()
                 .and().formLogin()
-                .and().csrf().ignoringAntMatchers("/h2-console/**", "/transactionapi/**")
+                .and().csrf().ignoringAntMatchers("/h2-console/**", "/apis/**")
                 .and().headers().frameOptions().sameOrigin();
         http
                 .formLogin()

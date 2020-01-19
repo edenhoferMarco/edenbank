@@ -13,6 +13,6 @@ public class LoginController {
 
     @RequestMapping("/login")
     public String login() {
-        return "/login";
+        return "login";
     }
 }
