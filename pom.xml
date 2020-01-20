@@ -96,7 +96,6 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/bigbazar-client-dependency.jar</systemPath>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -107,6 +106,7 @@
 				<configuration>
 					<mainClass>de.marcoedenhofer.edenbank.EdenbankApplication</mainClass>
 					<executable>true</executable>
+					<includeSystemScope>true</includeSystemScope>
 				</configuration>
 				<executions>
 					<execution>
