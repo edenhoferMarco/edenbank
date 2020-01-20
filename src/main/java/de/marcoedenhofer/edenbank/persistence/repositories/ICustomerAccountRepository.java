@@ -5,5 +5,4 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface ICustomerAccountRepository extends CrudRepository<CustomerAccount, Long> {
     long count();
-    Iterable<CustomerAccount> findAllByCustomerAccountIdNot(long customerAccountId);
 }

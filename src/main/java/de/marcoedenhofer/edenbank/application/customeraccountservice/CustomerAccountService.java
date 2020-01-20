@@ -4,9 +4,8 @@ import de.elyesnasri.lieferdienst.lieferdienstelyesnasri.application.postIdentSe
 import de.elyesnasri.lieferdienst.lieferdienstelyesnasri.persistence.entities.PersonalData;
 import de.elyesnasri.lieferdienst.lieferdienstelyesnasri.persistence.entities.enums.Salutation;
 import de.fatiharslan.bigbazar.service.GivawayService.GiveawayData;
+import de.fatiharslan.bigbazar.service.GivawayService.ResponseDto;
 import de.marcoedenhofer.edenbank.application.bankaccountservice.BankAccountService;
-import de.marcoedenhofer.edenbank.application.transactionservice.BankTransactionException;
-import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
 import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
@@ -22,22 +21,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
+
 @Service
 @Qualifier("security")
 @Scope("singleton")
 public class CustomerAccountService implements ICustomerAccountService {
-    private final long EDENBANK_ACCOUNT_ID = 1;
     private final double PRIVATE_MANAGEMENT_FEE = 0.0;
     private final double BUSINESS_MANAGEMENT_FEE = 150;
 
     // constants for partner api calls
     private final String POST_IDENT_API_URL = "http://im-codd:8808/apis/postIdent/verifyPostIdent";
-    private final String GIVEAWAY_API_URL = "http://im-codd:1111/restapi/giveaway/execute";
+    private final String GIVEAWAY_API_URL = "http://im-codd:8845/restapi/giveaway/execute";
     private final String GIVEAWAY_SENDER_EMAIL = "edenbank@edenbank.com";
 
     private final ICustomerRepository customerRepository;
     private final ICustomerAccountRepository customerAccountRepository;
-    private final ITransactionService transactionService;
     private final BCryptPasswordEncoder encoder;
     private final RestTemplate restServiceClient;
 
@@ -45,13 +44,11 @@ public class CustomerAccountService implements ICustomerAccountService {
     public CustomerAccountService(ICustomerRepository customerRepository,
                                   ICustomerAccountRepository customerAccountRepository,
                                   BCryptPasswordEncoder encoder,
-                                  RestTemplate restServiceClient,
-                                  ITransactionService transactionService) {
+                                  RestTemplate restServiceClient) {
         this.customerRepository = customerRepository;
         this.customerAccountRepository = customerAccountRepository;
         this.encoder = encoder;
         this.restServiceClient = restServiceClient;
-        this.transactionService = transactionService;
     }
 
     @Override
@@ -81,27 +78,25 @@ public class CustomerAccountService implements ICustomerAccountService {
     }
 
     @Override
-    public void callGiveawayService(CustomerAccount customerAccount) throws GiveawayException {
-        // TODO call fatih for giveaway
+    public TransactionData callGiveawayService(CustomerAccount customerAccount) throws GiveawayException {
         Customer customerData = customerAccount.getCustomerDetails();
         GiveawayData giveawayData = new GiveawayData();
+        final String customerName = customerData.getPersonalData().getFormOfAddress() + " "
+                + customerData.getPersonalData().getLastname() + " " + customerData.getPersonalData().getFirstname();
+        final int amountOfPresents = 3;
 
         giveawayData.setCountry(customerData.getPersonalData().getPersonalAddress().getCountry());
         giveawayData.setStreetName(customerData.getPersonalData().getPersonalAddress().getStreetName());
         giveawayData.setHouseNumber(customerData.getPersonalData().getPersonalAddress().getHouseNumber());
         giveawayData.setPostalNumber(customerData.getPersonalData().getPersonalAddress().getPostalNumber().toString());
-        final String customerName = customerData.getPersonalData().getFormOfAddress()
-                + customerData.getPersonalData().getLastname() + customerData.getPersonalData().getFirstname();
         giveawayData.setName(customerName);
         giveawayData.setSenderEmail(GIVEAWAY_SENDER_EMAIL);
-        final int amountOfPresents = 3;
-        giveawayData.setAmount(amountOfPresents);
+        giveawayData.setAmountOfProducts(amountOfPresents);
 
-        // returns
-        restServiceClient.postForEntity(GIVEAWAY_API_URL, giveawayData, GiveawayData.class);
+        ResponseEntity<ResponseDto> response = restServiceClient.postForEntity(GIVEAWAY_API_URL, giveawayData,
+                ResponseDto.class);
 
-        boolean giveawayServiceFailed = true;
-        if (giveawayServiceFailed) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
             throw new GiveawayException("Es tut uns leid, unser Partnerservice für Geschenke ist ausgefallen. " +
                     "Sie erhalten Ihr Geschenk sobald er wieder verfügbar ist!");
         } else {
@@ -109,12 +104,9 @@ public class CustomerAccountService implements ICustomerAccountService {
             transactionData.setSenderIban(BankAccountService.EDENBANK_IBAN);
             transactionData.setReceiverIban(BankAccountService.BIGBAZAR_IBAN);
             transactionData.setUsageDetails("Zahlung für Giveaway Service für Kunde: " + customerName);
+            transactionData.setAmount(Objects.requireNonNull(response.getBody()).getSum());
 
-            try {
-                transactionService.requestInternalTransaction(transactionData);
-            } catch (BankTransactionException e) {
-                e.printStackTrace();
-            }
+            return transactionData;
         }
     }
 
@@ -166,7 +158,6 @@ public class CustomerAccountService implements ICustomerAccountService {
     }
 
     public boolean customerIsIdentifiedViaPostIdent(Customer customer) {
-        // TODO: call elyes for postident
         VerifyPostIdent postIdentData = new VerifyPostIdent();
         PersonalData personalData = new PersonalData();
         personalData.setBirthDate(customer.getPersonalData().getBirthdate());
@@ -194,21 +185,6 @@ public class CustomerAccountService implements ICustomerAccountService {
         } else {
             return Salutation.ANY;
         }
-    }
-
-    // TODO: implement management fee booking
-    private void bookManagementFee() {
-        customerAccountRepository.findById(EDENBANK_ACCOUNT_ID).ifPresent(edenbankAccount -> {
-            if (edenbankAccount.getBankAccounts().isEmpty()) {
-                return;
-            } else {
-                BankAccount edenbankCheckingAccount = edenbankAccount.getBankAccounts().get(0);
-                customerAccountRepository.findAllByCustomerAccountIdNot(EDENBANK_ACCOUNT_ID)
-                        .forEach(customerAccount -> {
-
-                        });
-            }
-        });
     }
 
 }

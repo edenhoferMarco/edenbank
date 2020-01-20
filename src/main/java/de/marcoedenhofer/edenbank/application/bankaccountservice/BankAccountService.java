@@ -13,14 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 
 @Service
 @Scope("singleton")
 public class BankAccountService implements IBankAccountService {
     public final static String EDENBANK_IBAN = "DE750300110000000002";
-    public final static String BIGBAZAR_IBAN = "DE750300110000000004";
-    public final static String LIEFERDIENST_IBAN = "DE750300110000000006";
-
+    public final static String BIGBAZAR_IBAN = "DE750300110000000006";
 
     // constants for every edenbank account
     private final String COUNTRY_CODE = "DE";
@@ -92,7 +93,6 @@ public class BankAccountService implements IBankAccountService {
         customerAccountRepository.save(customerAccount);
     }
 
-
     @Override
     public BankAccount loadBankAccountWithId(long bankAccountId) throws BankAccountNotFoundException {
 
@@ -125,25 +125,20 @@ public class BankAccountService implements IBankAccountService {
 
     @Override
     public List<BankAccount> loadAllActiveBankAccountsFromCustomerAccount(CustomerAccount customerAccount) {
-        List<BankAccount> activeBankAccounts = new ArrayList<>();
 
-        customerAccount.getBankAccounts().stream()
-                .filter(bankAccount -> !bankAccount.isArchived())
-                .forEach(activeBankAccounts::add);
-
-        return activeBankAccounts;
+        return customerAccount.getBankAccounts().stream()
+                .filter(not(BankAccount::isArchived))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<BankAccount> loadAllActiveBankAccountsFromCustomerAccountExceptId(CustomerAccount customerAccount,
                                                                                   long exceptionAccountId) {
-        List<BankAccount> activeBankAccounts = new ArrayList<>();
 
-        customerAccount.getBankAccounts().stream()
-                .filter(bankAccount -> !bankAccount.isArchived() && bankAccount.getBankAccountId() != exceptionAccountId)
-                .forEach(activeBankAccounts::add);
-
-        return activeBankAccounts;
+        return customerAccount.getBankAccounts().stream()
+                .filter(not(BankAccount::isArchived))
+                .filter(bankAccount -> bankAccount.getBankAccountId() != exceptionAccountId)
+                .collect(Collectors.toList());
     }
 
     @Override

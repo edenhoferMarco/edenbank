@@ -4,6 +4,9 @@ import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountSer
 import de.marcoedenhofer.edenbank.application.customeraccountservice.GiveawayException;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.PostIdentException;
+import de.marcoedenhofer.edenbank.application.transactionservice.BankTransactionException;
+import de.marcoedenhofer.edenbank.application.transactionservice.ITransactionService;
+import de.marcoedenhofer.edenbank.application.transactionservice.TransactionData;
 import de.marcoedenhofer.edenbank.persistence.entities.BusinessCustomer;
 import de.marcoedenhofer.edenbank.persistence.entities.CustomerAccount;
 import de.marcoedenhofer.edenbank.persistence.entities.PrivateCustomer;
@@ -19,12 +22,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class RegistrationController {
     private final ICustomerAccountService customerAccountService;
     private final IBankAccountService bankAccountService;
+    private final ITransactionService transactionService;
 
     @Autowired
     public RegistrationController(ICustomerAccountService registrationService,
-                                  IBankAccountService bankAccountService) {
+                                  IBankAccountService bankAccountService, ITransactionService transactionService) {
         this.customerAccountService = registrationService;
         this.bankAccountService = bankAccountService;
+        this.transactionService = transactionService;
     }
 
     @RequestMapping(value = "/create_account", method = RequestMethod.GET)
@@ -36,18 +41,10 @@ public class RegistrationController {
 
     @RequestMapping(value = "/create_account/private", method = RequestMethod.POST)
     public String registerPrivateCustomer(@ModelAttribute("privateCustomer") PrivateCustomer privateCustomer, RedirectAttributes redirectAttributes) {
-        CustomerAccount account;
-
         try {
-            account = customerAccountService.createPrivateCustomerAccount(privateCustomer);
-            bankAccountService.createCheckingAccountWithFixedBudged(account,100000);
-            String accountCreationMessage = "Ihr Konto wurde erfolgreich angelegt. Kundennummer: " + account.getCustomerAccountId();
-            redirectAttributes.addFlashAttribute("accountCreationMessage", accountCreationMessage);
-            try {
-                customerAccountService.callGiveawayService(account);
-            } catch (GiveawayException e) {
-                redirectAttributes.addFlashAttribute("giveawayServiceError", e.getMessage());
-            }
+            CustomerAccount account = customerAccountService.createPrivateCustomerAccount(privateCustomer);
+            createCheckingAccount(redirectAttributes,account);
+            callGiveawayServiceForAccount(redirectAttributes, account);
         } catch (PostIdentException e) {
             redirectAttributes.addFlashAttribute("postIdentError", e.getMessage());
         }
@@ -58,14 +55,26 @@ public class RegistrationController {
     @RequestMapping(value = "/create_account/business", method = RequestMethod.POST)
     public String registerBusinessCustomer(@ModelAttribute("businessCustomer") BusinessCustomer businessCustomer, RedirectAttributes redirectAttributes) {
         CustomerAccount account = customerAccountService.createBusinessCustomerAccount(businessCustomer);
-        bankAccountService.createCheckingAccountWithFixedBudged(account,100000);
-        String accountCreationMessage = "Ihr Konto wurde erfolgreich angelegt. Kundennummer: " + account.getCustomerAccountId();
-        redirectAttributes.addFlashAttribute("accountCreationMessage" ,accountCreationMessage);
+        createCheckingAccount(redirectAttributes,account);
+        callGiveawayServiceForAccount(redirectAttributes, account);
+
+        return "redirect:/login";
+    }
+
+    private void callGiveawayServiceForAccount(RedirectAttributes redirectAttributes, CustomerAccount account) {
         try {
-            customerAccountService.callGiveawayService(account);
+            TransactionData giveawayPayment = customerAccountService.callGiveawayService(account);
+            transactionService.requestInternalTransaction(giveawayPayment);
         } catch (GiveawayException e) {
             redirectAttributes.addFlashAttribute("giveawayServiceError", e.getMessage());
+        } catch (BankTransactionException e) {
+            e.printStackTrace();
         }
-        return "redirect:/login";
+    }
+
+    private void createCheckingAccount(RedirectAttributes redirectAttributes, CustomerAccount account) {
+        bankAccountService.createCheckingAccountWithFixedBudged(account,100000);
+        String accountCreationMessage = "Ihr Konto wurde erfolgreich angelegt. Kundennummer: " + account.getCustomerAccountId();
+        redirectAttributes.addFlashAttribute("accountCreationMessage", accountCreationMessage);
     }
 }
