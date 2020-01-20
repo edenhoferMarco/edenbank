@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface ICustomerAccountService extends UserDetailsService {
-    CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer) throws PostIdentException;
-    CustomerAccount createBusinessCustomerAccount(BusinessCustomer customer);
+    CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer) throws PostIdentException, EmailAlreadyInUseException;
+    CustomerAccount createBusinessCustomerAccount(BusinessCustomer customer) throws EmailAlreadyInUseException;
     TransactionData callGiveawayService(CustomerAccount customerAccount) throws GiveawayException;
     CustomerAccount loadCustomerAccountWithId(long customerAccountId) throws UsernameNotFoundException;
     CustomerAccount loadCustomerAccountWithId(String customerAccountId) throws UsernameNotFoundException;

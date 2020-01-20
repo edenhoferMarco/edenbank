@@ -54,7 +54,7 @@ public class CustomerAccountService implements ICustomerAccountService {
     @Override
     @Transactional
     public CustomerAccount createPrivateCustomerAccount(PrivateCustomer customer)
-            throws PostIdentException {
+            throws PostIdentException, EmailAlreadyInUseException {
         if (!customerIsIdentifiedViaPostIdent(customer)) {
             throw new PostIdentException(customer.getPersonalData().getFormOfAddress() + " "
                     + customer.getPersonalData().getFirstname() + " "
@@ -62,17 +62,14 @@ public class CustomerAccountService implements ICustomerAccountService {
                     " konnte nicht durch unseren Partner identifiziert werden"
             );
         }
-        customer.setIdentified(true);
-        customer = customerRepository.save(customer);
+
         CustomerAccount account = buildCustomerAccount(PRIVATE_MANAGEMENT_FEE, customer);
         return customerAccountRepository.save(account);
     }
 
     @Override
     @Transactional
-    public CustomerAccount createBusinessCustomerAccount(BusinessCustomer customer) {
-        customer = customerRepository.save(customer);
-
+    public CustomerAccount createBusinessCustomerAccount(BusinessCustomer customer) throws EmailAlreadyInUseException {
         CustomerAccount account = buildCustomerAccount(BUSINESS_MANAGEMENT_FEE, customer);
         return customerAccountRepository.save(account);
     }
@@ -145,7 +142,13 @@ public class CustomerAccountService implements ICustomerAccountService {
         return false;
     }
 
-    private CustomerAccount buildCustomerAccount(double managementFee, Customer customer) {
+    private CustomerAccount buildCustomerAccount(double managementFee, Customer customer) throws EmailAlreadyInUseException {
+        if (customerEmailAlreadyExists(customer)) {
+            throw new EmailAlreadyInUseException("Die Email: " + customer.getEmail() + " existiert bereits");
+        }
+        customer.setIdentified(true);
+        customer = customerRepository.save(customer);
+
         CustomerAccount account = new CustomerAccount();
         account.setArchived(false);
         // for now use firstname as password
@@ -157,7 +160,12 @@ public class CustomerAccountService implements ICustomerAccountService {
         return account;
     }
 
-    public boolean customerIsIdentifiedViaPostIdent(Customer customer) {
+    private boolean customerEmailAlreadyExists(Customer customer) {
+        Customer databaseEntry = customerRepository.findCustomerByEmail(customer.getEmail());
+        return databaseEntry != null;
+    }
+
+    public boolean customerIsIdentifiedViaPostIdent(Customer customer) throws PostIdentException {
         VerifyPostIdent postIdentData = new VerifyPostIdent();
         PersonalData personalData = new PersonalData();
         personalData.setBirthDate(customer.getPersonalData().getBirthdate());
@@ -167,12 +175,16 @@ public class CustomerAccountService implements ICustomerAccountService {
         personalData.setSalutation(getSalutation(customer));
         postIdentData.setPersonalData(personalData);
 
-        ResponseEntity<Boolean> response = restServiceClient.postForEntity(POST_IDENT_API_URL, postIdentData, Boolean.class);
+        try {
+            ResponseEntity<Boolean> response = restServiceClient.postForEntity(POST_IDENT_API_URL, postIdentData, Boolean.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                return false;
+            }
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            return false;
+            return response.getBody().booleanValue();
+        } catch (Exception httpEx) {
+            throw new PostIdentException("Unser Postiden Dienstleister ist ausgefallen, leider ist die Erstellung eines Kontos aktuell nicht möglich!");
         }
-        return response.getBody().booleanValue();
     }
 
     private Salutation getSalutation(Customer customer) {

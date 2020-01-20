@@ -37,6 +37,7 @@ angelegt werden.
 Durch einen weiteren Partnerservice bekommt der Neukunde ein Werbegeschenk.
 
 ##### Achtung: Das Passwort ist der Vorname des Kunden!
+##### Achtung: Die Kundenummer wird bei erfolgreicher Registrierung als Alert über dem login feld gezeigt.
 
 Diese Entscheidung wurde getroffen, da Onlinebanken dem Kunden das Passwort
 häufig per Post oder E-Mail mitteilen (Quelle: S-Broker). Das Verschicken einer Email würde

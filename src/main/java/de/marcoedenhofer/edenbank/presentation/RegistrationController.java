@@ -1,6 +1,7 @@
 package de.marcoedenhofer.edenbank.presentation;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.EmailAlreadyInUseException;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.GiveawayException;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.PostIdentException;
@@ -47,6 +48,8 @@ public class RegistrationController {
             callGiveawayServiceForAccount(redirectAttributes, account);
         } catch (PostIdentException e) {
             redirectAttributes.addFlashAttribute("postIdentError", e.getMessage());
+        } catch (EmailAlreadyInUseException e) {
+            redirectAttributes.addFlashAttribute("emailAlreadyInUse",e.getMessage());
         }
 
         return "redirect:/login";
@@ -54,7 +57,12 @@ public class RegistrationController {
 
     @RequestMapping(value = "/create_account/business", method = RequestMethod.POST)
     public String registerBusinessCustomer(@ModelAttribute("businessCustomer") BusinessCustomer businessCustomer, RedirectAttributes redirectAttributes) {
-        CustomerAccount account = customerAccountService.createBusinessCustomerAccount(businessCustomer);
+        CustomerAccount account = null;
+        try {
+            account = customerAccountService.createBusinessCustomerAccount(businessCustomer);
+        } catch (EmailAlreadyInUseException e) {
+            redirectAttributes.addFlashAttribute("emailAlreadyInUse",e.getMessage());
+        }
         createCheckingAccount(redirectAttributes,account);
         callGiveawayServiceForAccount(redirectAttributes, account);
 
@@ -65,6 +73,7 @@ public class RegistrationController {
         try {
             TransactionData giveawayPayment = customerAccountService.callGiveawayService(account);
             transactionService.requestInternalTransaction(giveawayPayment);
+            redirectAttributes.addFlashAttribute("giveawayServiceSuccess","Ihr Geschenk ist unterwegs!");
         } catch (GiveawayException e) {
             redirectAttributes.addFlashAttribute("giveawayServiceError", e.getMessage());
         } catch (BankTransactionException e) {

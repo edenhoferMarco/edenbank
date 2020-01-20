@@ -1,6 +1,7 @@
 package de.marcoedenhofer.edenbank.config;
 
 import de.marcoedenhofer.edenbank.application.bankaccountservice.IBankAccountService;
+import de.marcoedenhofer.edenbank.application.customeraccountservice.EmailAlreadyInUseException;
 import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAccountService;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
@@ -47,7 +48,7 @@ public class DataLoader implements ApplicationRunner {
         }
     }
 
-    private void createEdenbankAccount() throws ParseException {
+    private void createEdenbankAccount() throws ParseException, EmailAlreadyInUseException {
         BusinessCustomer customer = new BusinessCustomer();
         PersonalData personalData = new PersonalData();
         Address personalAddress = new Address();
@@ -83,7 +84,7 @@ public class DataLoader implements ApplicationRunner {
         bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,20000000000L);
     }
 
-    private void createBigBazarAccount() throws ParseException {
+    private void createBigBazarAccount() throws ParseException, EmailAlreadyInUseException {
         BusinessCustomer customer = new BusinessCustomer();
         PersonalData personalData = new PersonalData();
         Address personalAddress = new Address();
@@ -119,7 +120,7 @@ public class DataLoader implements ApplicationRunner {
         bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,100000000);
     }
 
-    private void createLieferdienstAccount() throws ParseException {
+    private void createLieferdienstAccount() throws ParseException, EmailAlreadyInUseException {
         BusinessCustomer customer = new BusinessCustomer();
         PersonalData personalData = new PersonalData();
         Address personalAddress = new Address();
