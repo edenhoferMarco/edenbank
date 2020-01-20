@@ -80,6 +80,23 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>de.elyesnasri</groupId>
+			<artifactId>lieferdienst</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/lieferdienstElyesNasriClientDependencies.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fatiharslan</groupId>
+			<artifactId>bigbazar</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/bigbazar-client-dependency.jar</systemPath>
+		</dependency>
+
 	</dependencies>
 
 	<build>

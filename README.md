@@ -47,7 +47,7 @@ Testen halber hier nicht implementiert wurde.
  
 Grund hierfür ist erneut die Vereinfachung des Testprozesses.
 Normalerweise würde man sein Geld per Einzahlung oder Überweisung von einem anderen,
-bereits bestehendem, Bankkonto aufladen. Das ist im Ramen dieser Projektarbeit aber 
+bereits bestehendem, Bankkonto aufladen. Das ist im Rahmen dieser Projektarbeit aber 
 nicht möglich.
 
 #### 2.2 Bankkonto hinzufügen

@@ -17,6 +17,11 @@ import java.util.List;
 @Service
 @Scope("singleton")
 public class BankAccountService implements IBankAccountService {
+    public final static String EDENBANK_IBAN = "DE750300110000000002";
+    public final static String BIGBAZAR_IBAN = "DE750300110000000004";
+    public final static String LIEFERDIENST_IBAN = "DE750300110000000006";
+
+
     // constants for every edenbank account
     private final String COUNTRY_CODE = "DE";
     private final int BANK_CODE = 75030011;

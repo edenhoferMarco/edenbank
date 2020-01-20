@@ -5,8 +5,12 @@ import de.marcoedenhofer.edenbank.application.customeraccountservice.ICustomerAc
 import de.marcoedenhofer.edenbank.application.customeraccountservice.PostIdentException;
 import de.marcoedenhofer.edenbank.persistence.entities.*;
 import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerAccountRepository;
+import de.marcoedenhofer.edenbank.persistence.repositories.ICustomerRepository;
+import org.apache.catalina.Store;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +22,17 @@ public class DataLoader implements ApplicationRunner {
     private final ICustomerAccountService registrationService;
     private final IBankAccountService bankAccountService;
     private final ICustomerAccountRepository customerAccountRepository;
+    private final BCryptPasswordEncoder encoder;
+    private final ICustomerRepository customerRepository;
 
     public DataLoader(ICustomerAccountService registrationService,
                       IBankAccountService bankAccountService,
-                      ICustomerAccountRepository customerAccountRepository) {
+                      ICustomerAccountRepository customerAccountRepository, BCryptPasswordEncoder encoder, ICustomerRepository customerRepository) {
         this.registrationService = registrationService;
         this.bankAccountService = bankAccountService;
         this.customerAccountRepository = customerAccountRepository;
+        this.encoder = encoder;
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -63,15 +71,11 @@ public class DataLoader implements ApplicationRunner {
         customer.setEmail("theresatestperson@testmail.de");
         customer.setPersonalData(personalData);
 
-
-        CustomerAccount customerAccount = null;
-        try {
-            customerAccount = registrationService.createPrivateCustomerAccount(customer);
-        } catch (PostIdentException e) {
-            e.printStackTrace();
-        }
+        customer.setIdentified(true);
+        customer = customerRepository.save(customer);
+        CustomerAccount account = buildCustomerAccount(0.0, customer);
+        CustomerAccount customerAccount = customerAccountRepository.save(account);
         bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,1000000);
-
     }
 
     protected void createDummyCustomerAccount2() throws ParseException {
@@ -94,13 +98,10 @@ public class DataLoader implements ApplicationRunner {
         customer.setEmail("theodortestperson@testmail.de");
         customer.setPersonalData(personalData);
 
-
-        CustomerAccount customerAccount = null;
-        try {
-            customerAccount = registrationService.createPrivateCustomerAccount(customer);
-        } catch (PostIdentException e) {
-            e.printStackTrace();
-        }
+        customer.setIdentified(true);
+        customer = customerRepository.save(customer);
+        CustomerAccount account = buildCustomerAccount(0.0, customer);
+        CustomerAccount customerAccount =  customerAccountRepository.save(account);
         bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,1000000);
 
     }
@@ -211,5 +212,17 @@ public class DataLoader implements ApplicationRunner {
 
         CustomerAccount customerAccount = registrationService.createBusinessCustomerAccount(customer);
         bankAccountService.createCheckingAccountWithFixedBudged(customerAccount,100000000);
+    }
+
+    private CustomerAccount buildCustomerAccount(double managementFee, Customer customer) {
+        CustomerAccount account = new CustomerAccount();
+        account.setArchived(false);
+        // for now use firstname as password
+        String password = customer.getPersonalData().getFirstname();
+        account.setPassword(encoder.encode(password));
+        account.setManagementFee(managementFee);
+        account.setCustomerDetails(customer);
+
+        return account;
     }
 }
