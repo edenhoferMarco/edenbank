@@ -104,3 +104,11 @@ Theresa Testperson:
 Theodor Testperson:
 - Kundennummer: 9
 - Password: Theodor
+
+### 5. Nicht erfüllte Requirements:
+
+- Verwendung von Orphan Removal:
+  - Da eine Bank auch geschlossene Konten nicht aus der Datenbank löschen 
+  möchte (z.B. um nachvollziehen zu können, wer an welcher Transaktion beteiligt
+   war), konnte keine Sinvolle verwendung für "orpoanRemoval=true" gefunden 
+   werden.
