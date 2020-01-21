@@ -92,3 +92,15 @@ Da eine minütliche Zinszahlung in Zeiten der drohenden Minuszinsen ein
 ungerechter Vorteil gegenüber der Konkurrenz ist, würde sich die edenbank freuen,
 wenn die Zinsberechtigten Konten nach dem Testen wieder stillgelegt
 werden, um ein Erscheinen des Bundeskartellamts zu vermeiden ;)
+
+### 4. Vorhandene Konten
+Sollte es aus irgendwelchen Gründen technisch nicht möglich sein neue Benutzerkonten
+anzulegen, sind für diesen Fall zwei Dummy User bereits angeledet:
+
+Theresa Testperson:
+- Kundenummer: 7
+- Passwort: Theresa
+
+Theodor Testperson:
+- Kundennummer: 9
+- Password: Theodor
