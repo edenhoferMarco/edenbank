@@ -1,4 +1,3 @@
-document.getElementById("business-details");
 let businessForm = document.getElementById("business-customer-form-row");
 let privateForm = document.getElementById("private-customer-form-row");
 let privateCustomerButton = document.getElementById("radioCustomer");

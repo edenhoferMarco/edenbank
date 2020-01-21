@@ -20,7 +20,7 @@ public class CustomerAccount extends AbstractEntity<Long> implements UserDetails
     @OneToMany
     private List<BankAccount> bankAccounts = new ArrayList<>();
     @OneToOne
-    @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Customer customerDetails;
 
     @Override
