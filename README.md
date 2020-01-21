@@ -1,4 +1,4 @@
-# edenbank
+# edenbank README
 Projektarbeit von Marco Edenhofer für die Vorlesung Software Entwicklung an der OTH Regensburg im 
 Wintersemester 19/20. 
 
@@ -97,13 +97,13 @@ werden, um ein Erscheinen des Bundeskartellamts zu vermeiden ;)
 Sollte es aus irgendwelchen Gründen technisch nicht möglich sein neue Benutzerkonten
 anzulegen, sind für diesen Fall zwei Dummy User bereits angeledet:
 
-Theresa Testperson:
-- Kundenummer: 7
-- Passwort: Theresa
+- Theresa Testperson:
+  - Kundenummer: 7
+  - Passwort: Theresa
 
-Theodor Testperson:
-- Kundennummer: 9
-- Password: Theodor
+- Theodor Testperson:
+  - Kundennummer: 9
+  - Password: Theodor
 
 ### 5. Nicht erfüllte Requirements:
 
